@@ -1,0 +1,704 @@
+<UserControl x:Class="DshManager.Views.PluginsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="26,20,26,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ============ 页头 + 页签切换 ============ -->
+        <StackPanel Grid.Row="0">
+            <StackPanel Orientation="Horizontal" Margin="2,0,0,12">
+                <TextBlock Text="🧩" FontSize="22" VerticalAlignment="Center"/>
+                <TextBlock Text="插件管理" Style="{DynamicResource SectionTitleStyle}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock Text="— 安装 / 卸载插件，或到市场里联网发现新插件" Style="{DynamicResource MutedTextStyle}"
+                           Margin="12,4,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                <!-- 选中页签用半透明鲸鱼蓝高亮（与导航按钮一致的视觉语言） -->
+                <Button Content="📦 已安装" Command="{Binding ShowInstalledTabCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource MoeButtonStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActiveTabIndex}" Value="0">
+                                    <Setter Property="Background" Value="{DynamicResource SelectedNavBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Content="🛒 插件市场" Margin="8,0,0,0" Command="{Binding ShowMarketTabCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource MoeButtonStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActiveTabIndex}" Value="1">
+                                    <Setter Property="Background" Value="{DynamicResource SelectedNavBrush}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <!-- ============================================================
+                 页签 1：已安装（原有能力，行为不变）
+                 ============================================================ -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ScrollViewer.Style>
+                    <Style TargetType="ScrollViewer">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActiveTabIndex}" Value="0">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ScrollViewer.Style>
+
+                <Border Style="{DynamicResource MoeCardStyle}" Padding="22,20">
+                    <StackPanel>
+                        <!-- ============ 卡片头：标题 + 检查更新 / 全部更新 / 刷新 ============ -->
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                <Button Content="🔄 检查更新"
+                                        Style="{DynamicResource MoeButtonStyle}"
+                                        Background="#22FFFFFF"
+                                        Command="{Binding CheckUpdatesCommand}"/>
+                                <Button Content="⬆ 全部更新" Margin="8,0,0,0"
+                                        Style="{DynamicResource PrimaryButtonStyle}"
+                                        Command="{Binding UpdateAllCommand}"/>
+                                <Button Content="🔄 刷新" Margin="8,0,0,0"
+                                        Style="{DynamicResource MoeButtonStyle}"
+                                        Background="#22FFFFFF"
+                                        Command="{Binding RefreshCommand}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="🧩" FontSize="19" VerticalAlignment="Center"/>
+                                <TextBlock Text="插件管理" Style="{DynamicResource SectionTitleStyle}" Margin="9,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding ProfileLabel}" Style="{DynamicResource MutedTextStyle}"
+                                           Margin="12,4,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DockPanel>
+
+                        <!-- 常驻弱提示：装卸更新会触发 pnpm 重建依赖目录，提前告知避免用户在空窗期反复重试 -->
+                        <TextBlock Text="💡 安装/卸载插件会重建依赖目录（约 1 分钟）；建议先停止 dsh，装完等约 1 分钟再启动"
+                                   Style="{DynamicResource MutedTextStyle}" TextWrapping="Wrap" Margin="2,14,0,0"/>
+
+                        <!-- ============ 安装行 ============ -->
+                        <Grid Margin="0,18,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Style="{DynamicResource MoeTextBoxStyle}"
+                                     Text="{Binding PackageInput, UpdateSourceTrigger=PropertyChanged}"
+                                     VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="1" Content="📦 安装" Style="{DynamicResource PrimaryButtonStyle}"
+                                    Margin="10,0,0,0" Padding="18,8"
+                                    Command="{Binding InstallCommand}"/>
+                        </Grid>
+                        <TextBlock Text="提示：插件名或本地路径，如 @deepseek-ai/xxx；多个包用空格分隔"
+                                   Style="{DynamicResource MutedTextStyle}" Margin="2,6,0,0"/>
+
+                        <!-- ============ 插件列表 ============ -->
+                        <TextBlock Text="已安装插件" Style="{DynamicResource SectionTitleStyle}" FontSize="14"
+                                   Margin="2,22,0,10"/>
+                        <ItemsControl ItemsSource="{Binding Plugins}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#220A1620" BorderBrush="{DynamicResource BorderSoftBrush}"
+                                            BorderThickness="1" CornerRadius="10" Padding="14,10" Margin="0,0,0,8">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- 名称 -->
+                                            <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="13.5"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+
+                                            <!-- 版本 -->
+                                            <TextBlock Grid.Column="1" Text="{Binding Version}"
+                                                       Style="{DynamicResource MutedTextStyle}"
+                                                       Margin="12,0,0,0" VerticalAlignment="Center"/>
+
+                                            <!-- 状态徽章：已激活显示绿色 -->
+                                            <Border Grid.Column="2" Background="#22FFFFFF" CornerRadius="9"
+                                                    Padding="8,3" Margin="12,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Status}" FontSize="11">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Status}" Value="已激活">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource OkGreenBrush}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+
+                                            <!-- 可更新徽章：检查到更新时显示「可更新到 x.y.z」 -->
+                                            <Border Grid.Column="3" Background="#2200C853" CornerRadius="9"
+                                                    Padding="8,3" Margin="12,0,0,0" VerticalAlignment="Center">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding CanUpdate}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding UpdateBadgeText, Mode=OneWay}" FontSize="11"
+                                                           Foreground="{DynamicResource OkGreenBrush}"/>
+                                            </Border>
+
+                                            <!-- 市场未找到：私有包 / 已下架，仅提示，不视为错误 -->
+                                            <TextBlock Grid.Column="3" Text="{Binding MarketNotFoundText, Mode=OneWay}"
+                                                       FontSize="11" Foreground="{DynamicResource TextMutedBrush}"
+                                                       Margin="12,0,0,0" VerticalAlignment="Center">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding MarketNotFound}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+
+                                            <!-- 更新该插件（仅在可更新时出现） -->
+                                            <Button Grid.Column="4" Content="⬆ 更新" Padding="12,5" FontSize="12"
+                                                    Margin="12,0,0,0"
+                                                    Foreground="{DynamicResource WhaleBlueLightBrush}"
+                                                    Command="{Binding DataContext.UpdatePluginCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource MoeButtonStyle}">
+                                                        <Setter Property="Background" Value="#22FFFFFF"/>
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding CanUpdate}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+
+                                            <!-- 卸载 -->
+                                            <Button Grid.Column="5" Content="🗑️ 卸载"
+                                                    Style="{DynamicResource MoeButtonStyle}"
+                                                    Margin="14,0,0,0" Padding="12,5" FontSize="12"
+                                                    Foreground="{DynamicResource PinkAccentBrush}"
+                                                    Command="{Binding DataContext.UninstallCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- 空列表占位（仅在无插件时显示） -->
+                        <TextBlock Text="（暂无插件，在输入框填写包名后点击安装）" Margin="2,4,0,2" TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasNoPlugins}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <!-- ============ 底部状态 ============ -->
+                        <Border Background="#22FFFFFF" CornerRadius="10" Padding="14,10" Margin="0,14,0,0">
+                            <TextBlock Text="{Binding StatusText}" Style="{DynamicResource MutedTextStyle}"
+                                       TextWrapping="Wrap"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </ScrollViewer>
+
+            <!-- ============================================================
+                 页签 2：插件市场（联网搜索 npm registry 的 dsh 插件）
+                 ============================================================ -->
+            <Grid>
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ActiveTabIndex}" Value="1">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- ============ 工具条：搜索 + 刷新 + 分类筛选 + 排序 + 兼容筛选 ============ -->
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0" Style="{DynamicResource MoeTextBoxStyle}"
+                             Text="{Binding MarketQuery, UpdateSourceTrigger=PropertyChanged}"
+                             VerticalContentAlignment="Center">
+                        <!-- 回车即搜索 -->
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding SearchMarketCommand}"/>
+                        </TextBox.InputBindings>
+                    </TextBox>
+                    <Button Grid.Column="1" Content="🔍 搜索" Style="{DynamicResource PrimaryButtonStyle}"
+                            Margin="10,0,0,0" Padding="16,8" Command="{Binding SearchMarketCommand}"/>
+                    <Button Grid.Column="2" Content="🔄 刷新" Style="{DynamicResource MoeButtonStyle}"
+                            Background="#22FFFFFF" Margin="8,0,0,0" Command="{Binding RefreshMarketCommand}"/>
+                    <ComboBox Grid.Column="3" Width="132" Margin="8,0,0,0" VerticalContentAlignment="Center"
+                              ItemsSource="{Binding MarketCategories}"
+                              SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
+
+                    <!-- 排序：相关度走服务端分页；更新时间 / 下载量为客户端排序 + 分页 -->
+                    <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="8,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="排序" Style="{DynamicResource MutedTextStyle}"
+                                   VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <ComboBox Width="150" VerticalContentAlignment="Center"
+                                  ItemsSource="{Binding MarketSortOptions}"
+                                  SelectedItem="{Binding SelectedMarketSortOption, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <!-- 只看兼容本机 dsh：文案里的版本号取本机实际值，不写死 -->
+                    <CheckBox Grid.Row="1" Grid.ColumnSpan="5" Margin="4,10,0,0"
+                              Foreground="{DynamicResource TextSecondaryBrush}"
+                              IsChecked="{Binding OnlyCompatible, Mode=TwoWay}"
+                              Content="{Binding CompatibleFilterLabel, Mode=OneWay}"/>
+
+                    <!-- 常驻弱提示：市场里的装卸同样会触发 pnpm 重建依赖目录 -->
+                    <TextBlock Grid.Row="2" Grid.ColumnSpan="5"
+                               Text="💡 安装/卸载插件会重建依赖目录（约 1 分钟）；建议先停止 dsh，装完等约 1 分钟再启动"
+                               Style="{DynamicResource MutedTextStyle}" TextWrapping="Wrap" Margin="2,8,0,0"/>
+
+                    <!-- 说明：内置的「扩展记忆」插件不来自市场，避免用户在此找不到而困惑 -->
+                    <TextBlock Grid.Row="3" Grid.ColumnSpan="5"
+                               Text="💡 面板自带的「扩展记忆」插件不在市场里，它随面板内置提供（见「记忆库 → 扩展记忆」）"
+                               Style="{DynamicResource MutedTextStyle}" TextWrapping="Wrap" Margin="2,6,0,0"/>
+                </Grid>
+
+                <!-- ============ 状态文本（加载进度 / 结果统计 / 中文错误） ============ -->
+                <TextBlock Grid.Row="1" Text="{Binding MarketStatusText, Mode=OneWay}"
+                           Style="{DynamicResource MutedTextStyle}" TextWrapping="Wrap" Margin="2,8,0,8"/>
+
+                <!-- ============ 内容：左列表 + 右详情 ============ -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 插件卡片列表 -->
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <Grid>
+                            <ItemsControl ItemsSource="{Binding MarketItems}" Margin="0,0,10,0">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#220A1620" BorderBrush="{DynamicResource BorderSoftBrush}"
+                                                BorderThickness="1" CornerRadius="10" Padding="14,10" Margin="0,0,0,8">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+
+                                                <!-- 标题 + 版本 + 不兼容徽章 -->
+                                                <DockPanel Grid.Row="0">
+                                                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                                                        <Border Background="#33FF80AB" CornerRadius="9" Padding="8,3"
+                                                                VerticalAlignment="Center">
+                                                            <Border.Style>
+                                                                <Style TargetType="Border">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsCompatible}" Value="False">
+                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Border.Style>
+                                                            <TextBlock Text="{Binding CompatibilityText, Mode=OneWay}" FontSize="11"
+                                                                       Foreground="{DynamicResource PinkLightBrush}"/>
+                                                        </Border>
+                                                        <TextBlock Text="{Binding Version, Mode=OneWay}"
+                                                                   Style="{DynamicResource MutedTextStyle}"
+                                                                   Margin="10,0,0,0" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    <TextBlock Text="{Binding Title, Mode=OneWay}" FontSize="13.5"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                </DockPanel>
+
+                                                <!-- 中文简介（dshhub.summary，缺失回退 description） -->
+                                                <TextBlock Grid.Row="1" Text="{Binding SummaryText, Mode=OneWay}"
+                                                           Style="{DynamicResource MutedTextStyle}"
+                                                           TextWrapping="Wrap" Margin="0,6,0,0"/>
+
+                                                <!-- 分类 · 发布时间 · 下载量 · 安装状态 -->
+                                                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,6,0,0">
+                                                    <TextBlock Text="{Binding CategoriesText, Mode=OneWay}" FontSize="11"
+                                                               Foreground="{DynamicResource WhaleBlueLightBrush}"/>
+                                                    <TextBlock Text="{Binding PublishedText, Mode=OneWay}"
+                                                               Style="{DynamicResource MutedTextStyle}" Margin="10,0,0,0"/>
+                                                    <TextBlock Text="{Binding DownloadsText, Mode=OneWay}" FontSize="11"
+                                                               Foreground="{DynamicResource WhaleBlueLightBrush}" Margin="10,0,0,0"/>
+                                                    <TextBlock Text="{Binding InstalledText, Mode=OneWay}" FontSize="11"
+                                                               Foreground="{DynamicResource TextMutedBrush}" Margin="10,0,0,0"/>
+                                                </StackPanel>
+
+                                                <!-- 操作按钮：未安装 → 安装；已安装 → 卸载；详情始终可用 -->
+                                                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,0">
+                                                    <Button Content="📦 安装" Padding="12,5" FontSize="12"
+                                                            Command="{Binding DataContext.InstallMarketPluginCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsInstalled}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                    <Button Content="🗑️ 卸载" Margin="8,0,0,0" Padding="12,5" FontSize="12"
+                                                            Foreground="{DynamicResource PinkAccentBrush}"
+                                                            Command="{Binding DataContext.UninstallMarketPluginCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button" BasedOn="{StaticResource MoeButtonStyle}">
+                                                                <Setter Property="Background" Value="#22FFFFFF"/>
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsInstalled}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                    <Button Content="ℹ️ 详情" Margin="8,0,0,0" Padding="12,5" FontSize="12"
+                                                            Style="{DynamicResource MoeButtonStyle}"
+                                                            Foreground="{DynamicResource WhaleBlueLightBrush}"
+                                                            Command="{Binding DataContext.SelectMarketItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- 空态占位 -->
+                            <TextBlock Text="（未找到插件，换个关键词试试；或点「刷新」浏览全部）"
+                                       TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasNoMarketItems}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </ScrollViewer>
+
+                    <!-- 详情面板 -->
+                    <Border Grid.Column="1" Width="340" Style="{DynamicResource MoeCardStyle}" Padding="16,14">
+                        <Grid>
+                            <!-- 空态提示 -->
+                            <TextBlock Text="（点击左侧插件的「详情」查看中文简介、能力与网络权限）"
+                                       TextWrapping="Wrap" VerticalAlignment="Top">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasSelectedMarketItem}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <!-- 详情内容（选中时显示；DataContext 切到选中条目） -->
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ScrollViewer.Style>
+                                    <Style TargetType="ScrollViewer">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasSelectedMarketItem}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ScrollViewer.Style>
+
+                                <StackPanel DataContext="{Binding SelectedMarketItem}">
+                                    <TextBlock Text="{Binding Title, Mode=OneWay}" FontSize="15" FontWeight="Bold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding Name, Mode=OneWay}" Style="{DynamicResource MutedTextStyle}"
+                                               TextWrapping="Wrap" Margin="0,4,0,0"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <TextBlock Text="{Binding Version, Mode=OneWay}" FontSize="11"
+                                                   Foreground="{DynamicResource WhaleBlueLightBrush}"/>
+                                        <TextBlock Text="{Binding InstalledText, Mode=OneWay}" FontSize="11"
+                                                   Foreground="{DynamicResource TextMutedBrush}" Margin="10,0,0,0"/>
+                                        <TextBlock Text="{Binding PublishedText, Mode=OneWay}" FontSize="11"
+                                                   Foreground="{DynamicResource TextMutedBrush}" Margin="10,0,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- 不兼容提示（粉色） -->
+                                    <Border Background="#33FF80AB" CornerRadius="8" Padding="9,6" Margin="0,8,0,0"
+                                            HorizontalAlignment="Left">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsCompatible}" Value="False">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <TextBlock Text="{Binding CompatibilityText, Mode=OneWay}" FontSize="11"
+                                                   Foreground="{DynamicResource PinkLightBrush}" TextWrapping="Wrap"/>
+                                    </Border>
+
+                                    <!-- 中文简介 -->
+                                    <TextBlock Text="{Binding SummaryText, Mode=OneWay}" TextWrapping="Wrap" FontSize="12"
+                                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,10,0,0"/>
+
+                                    <!-- 分类 -->
+                                    <StackPanel Margin="0,12,0,0">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Categories.Count}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <TextBlock Text="分类" Style="{DynamicResource SectionTitleStyle}" FontSize="12"/>
+                                        <ItemsControl ItemsSource="{Binding Categories, Mode=OneWay}" Margin="0,5,0,0">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="#22FFFFFF" CornerRadius="8" Padding="8,3" Margin="0,0,6,6">
+                                                        <TextBlock Text="{Binding}" FontSize="11"
+                                                                   Foreground="{DynamicResource WhaleBlueLightBrush}"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <!-- 生效面（surfaces） -->
+                                    <StackPanel Margin="0,8,0,0">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Surfaces.Count}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <TextBlock Text="生效面" Style="{DynamicResource SectionTitleStyle}" FontSize="12"/>
+                                        <ItemsControl ItemsSource="{Binding Surfaces, Mode=OneWay}" Margin="0,5,0,0">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="#22FFFFFF" CornerRadius="8" Padding="8,3" Margin="0,0,6,6">
+                                                        <TextBlock Text="{Binding}" FontSize="11"
+                                                                   Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <!-- 提供的能力（capabilities.provides） -->
+                                    <StackPanel Margin="0,8,0,0">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Provides.Count}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <TextBlock Text="提供能力" Style="{DynamicResource SectionTitleStyle}" FontSize="12"/>
+                                        <ItemsControl ItemsSource="{Binding Provides, Mode=OneWay}" Margin="0,5,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}" FontSize="11" TextWrapping="Wrap"
+                                                               Foreground="{DynamicResource OkGreenBrush}" Margin="0,0,0,3"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <!-- 网络权限（安全提示，逐条列出） -->
+                                    <StackPanel Margin="0,8,0,0">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding NetworkPermissions.Count}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <TextBlock Text="⚠️ 网络权限" Style="{DynamicResource SectionTitleStyle}" FontSize="12"
+                                                   Foreground="{DynamicResource PinkAccentBrush}"/>
+                                        <Border Background="#22FF80AB" BorderBrush="{DynamicResource PinkAccentBrush}"
+                                                BorderThickness="1" CornerRadius="8" Padding="10,8" Margin="0,6,0,0">
+                                            <ItemsControl ItemsSource="{Binding NetworkPermissions, Mode=OneWay}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding}" FontSize="11" TextWrapping="Wrap"
+                                                                   Foreground="{DynamicResource PinkLightBrush}" Margin="0,0,0,3"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- 外部链接：用默认浏览器打开 -->
+                                    <WrapPanel Margin="0,12,0,0">
+                                        <Button Content="🔗 仓库" Padding="10,5" FontSize="11" Margin="0,0,8,6"
+                                                Command="{Binding DataContext.OpenUrlCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding RepositoryUrl, Mode=OneWay}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource MoeButtonStyle}">
+                                                    <Setter Property="Background" Value="#22FFFFFF"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding RepositoryUrl}" Value="">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <Button Content="🏠 主页" Padding="10,5" FontSize="11" Margin="0,0,8,6"
+                                                Command="{Binding DataContext.OpenUrlCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding HomepageUrl, Mode=OneWay}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource MoeButtonStyle}">
+                                                    <Setter Property="Background" Value="#22FFFFFF"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HomepageUrl}" Value="">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <Button Content="📦 npm 页面" Padding="10,5" FontSize="11" Margin="0,0,8,6"
+                                                Command="{Binding DataContext.OpenUrlCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding NpmUrl, Mode=OneWay}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource MoeButtonStyle}">
+                                                    <Setter Property="Background" Value="#22FFFFFF"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding NpmUrl}" Value="">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- ============ 分页 ============ -->
+                <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="◀ 上一页" Style="{DynamicResource MoeButtonStyle}" Background="#22FFFFFF"
+                            Padding="12,6" FontSize="12" Command="{Binding PrevMarketPageCommand}"/>
+                    <TextBlock Text="{Binding MarketPageText, Mode=OneWay}" Style="{DynamicResource MutedTextStyle}"
+                               Margin="10,0,10,0" VerticalAlignment="Center"/>
+                    <Button Content="下一页 ▶" Style="{DynamicResource MoeButtonStyle}" Background="#22FFFFFF"
+                            Padding="12,6" FontSize="12" Command="{Binding NextMarketPageCommand}"/>
+                </StackPanel>
+
+                <!-- ============ 安装 / 卸载实时日志 ============ -->
+                <Border Grid.Row="4" Background="#330A1620" BorderBrush="{DynamicResource BorderSoftBrush}"
+                        BorderThickness="1" CornerRadius="10" Padding="10,8" Margin="0,10,0,0" Height="96">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding MarketLogLines}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" FontSize="11" TextWrapping="Wrap"
+                                               Foreground="{DynamicResource TextMutedBrush}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

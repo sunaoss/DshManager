@@ -1,0 +1,79 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+
+    <!-- 【版本号唯一真源】installer\DshManager.iss 里的 #define AppVersion / AppVersionQuad
+         必须与本值保持同步，改一处必须改另一处（同步步骤写在 .iss 顶部注释里，
+         tools\build-installer.ps1 会在打包前比对两处版本、不一致就报错退出）。
+         为什么三处都显式写：不写 <Version> 时 SDK 会把 ProductVersion/FileVersion 定为
+         1.0.0(.0)，于是「安装包叫 1.9.7、EXE 属性页写 1.0.0」两头对不上，也没法靠
+         二进制判断用户装的到底是哪一版。AssemblyVersion 用四段格式，便于 CLR 侧比较。 -->
+    <Version>1.9.7</Version>
+    <FileVersion>1.9.7.0</FileVersion>
+    <AssemblyVersion>1.9.7.0</AssemblyVersion>
+
+    <!-- 【署名】本项目由 al（留恋风尘四溅）自主创作。这些字段会写进
+         DshManager.exe 的属性页与文件元数据，方便用户确认程序来源。 -->
+    <Authors>al（留恋风尘四溅）</Authors>
+    <Company>al（留恋风尘四溅）</Company>
+    <Product>鲸鱼娘 · DeepSeek Harness 管理面板</Product>
+    <Copyright>Copyright (c) 2026 al（留恋风尘四溅）</Copyright>
+
+    <!-- 【附属程序集语言裁剪】发布目录里原本有 13 个框架本地化目录
+         （cs/de/es/fr/it/ja/ko/pl/pt-BR/ru/tr/zh-Hans/zh-Hant，各 17 个
+         *.resources.dll，合计约 14.9 MiB）。它们是 WPF/WinForms 自身的资源程序集，
+         只影响框架抛出的异常消息、系统对话框文案的语言；本应用界面全部是自绘中文，
+         代码里也没有任何 CurrentUICulture 相关逻辑，不跟随这些资源切换语言。
+         只保留 zh-Hans：中文系统上的框架异常消息仍是中文，其余 12 个语言（约 13.8 MiB）
+         不再生成。这比在 .iss 里写 Excludes 更根本 —— 后者只是打包时不带，
+         输出目录里照样会生成。（.iss 里仍保留 Excludes 作为双保险。）
+         注意：不设 <InvariantGlobalization>，日期/数字/排序仍按系统区域设置走。 -->
+    <SatelliteResourceLanguages>zh-Hans</SatelliteResourceLanguages>
+
+    <!-- 【故意不声明 <RuntimeIdentifier>】一旦声明 win-x64，默认 dotnet build 的输出路径会从
+         bin\Release\net8.0-windows\ 变成 bin\x64\Release\net8.0-windows\win-x64\，
+         打乱其他人/既有脚本对输出路径的预期。发布所需的 RID 改由发布命令显式指定：
+         dotnet publish 加 -c Release、-r win-x64、以及 self-contained 开关
+         （完整命令见 tools\build-installer.ps1），效果一致且不影响日常构建。
+         注意：XML 注释里不能出现连续两个连字符，所以这里不写完整的命令行原文。
+         同样不设 <SelfContained> / <PublishSingleFile>：实际发布产物是自包含的
+         多文件目录（约 477 个文件 / 161 MiB），不是「单文件」，旧注释的说法有误已修正。 -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="YamlDotNet" Version="13.7.1" />
+    <!-- 进程命令行 / 父进程必须走 WMI（Win32_Process）：.NET 8 未内置跨进程读取命令行的托管 API -->
+    <PackageReference Include="System.Management" Version="8.0.0" />
+  </ItemGroup>
+
+  <!-- 鲸鱼娘表情包：拷贝到输出目录，聊天页按相对路径加载 -->
+  <ItemGroup>
+    <Content Include="Assets\Stickers\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- 扩展记忆插件源码：随程序发布到输出目录 dsh-plugin\dsh-long-memory，
+       面板「一键安装」时从这里复制到 profile（不能依赖联网 pnpm 安装） -->
+  <ItemGroup>
+    <!-- 【Exclude 的理由】原写法没有 Exclude：只要在 dsh-plugin\dsh-long-memory 下执行过
+         install，目录里就会出现 node_modules（可能上千个文件、几十 MB），整个被当成 Content
+         打进 publish\ 和安装包。bin/obj 之类的构建产物同理（.gitignore 对 MSBuild 的 glob
+         不生效，必须在这里显式排除）。保留插件源码本身（index.js / package.json / *.md /
+         *.yml 等）。
+         注意：Exclude 的路径按「工程文件所在目录（DshManager\）」求值，所以要写全
+         ..\dsh-plugin\... 前缀，不能只写 node_modules\**。 -->
+    <Content Include="..\dsh-plugin\dsh-long-memory\**\*"
+             Exclude="..\dsh-plugin\dsh-long-memory\node_modules\**\*;..\dsh-plugin\dsh-long-memory\bin\**\*;..\dsh-plugin\dsh-long-memory\obj\**\*;..\dsh-plugin\dsh-long-memory\.git\**\*;..\dsh-plugin\dsh-long-memory\**\*.log;..\dsh-plugin\dsh-long-memory\**\*.tgz">
+      <Link>dsh-plugin\dsh-long-memory\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

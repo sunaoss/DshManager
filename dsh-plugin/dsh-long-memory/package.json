@@ -1,0 +1,10 @@
+{
+  "name": "dsh-long-memory",
+  "version": "1.0.0",
+  "description": "大容量长期记忆：独立于人格卡，向每个会话注入自定义记忆文件",
+  "type": "module",
+  "main": "index.js",
+  "exports": { ".": { "default": "./index.js" } },
+  "files": ["index.js", "cordis.patch.yml", "README.md"],
+  "dsh": { "bundle": { "patch": "./cordis.patch.yml" } }
+}

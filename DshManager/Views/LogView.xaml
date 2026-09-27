@@ -1,0 +1,110 @@
+<UserControl x:Class="DshManager.Views.LogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <!-- 下拉框内联样式（项目未提供 ComboBox 共享样式，这里就地定义，不改动 Styles/*） -->
+        <Style x:Key="InlineComboStyle" TargetType="ComboBox">
+            <Setter Property="Background" Value="#330A1620"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderSoftBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="MinWidth" Value="120"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="26,20,26,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- 页头 + 状态行 -->
+            <RowDefinition Height="Auto"/>  <!-- 工具条 -->
+            <RowDefinition Height="*"/>     <!-- 日志列表（占满剩余高度） -->
+        </Grid.RowDefinitions>
+
+        <!-- ============ 页头：标题 + 状态行（条目数 + dsh 日志文件路径） ============ -->
+        <StackPanel Grid.Row="0" Margin="2,0,0,14">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="📜" FontSize="22" VerticalAlignment="Center"/>
+                <TextBlock Text="运行日志 · 实时查看面板与 dsh 的输出"
+                           Style="{DynamicResource SectionTitleStyle}"
+                           Margin="10,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <!-- Run.Text 默认 TwoWay，指向只读属性需显式 Mode=OneWay；此处直接用 Text 绑定 -->
+            <TextBlock Text="{Binding StatusText, Mode=OneWay}"
+                       Style="{DynamicResource MutedTextStyle}"
+                       Margin="0,5,0,0" TextTrimming="CharacterEllipsis"/>
+        </StackPanel>
+
+        <!-- ============ 工具条：自动滚动 / 来源过滤 / 操作按钮 ============ -->
+        <Border Grid.Row="1" Style="{DynamicResource MoeCardStyle}" Padding="18,12" Margin="0,0,0,14">
+            <DockPanel>
+                <!-- 右侧操作按钮 -->
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="🧹 清空" Style="{DynamicResource MoeButtonStyle}"
+                            Command="{Binding ClearServiceLogsCommand}"/>
+                    <Button Content="📂 打开日志目录" Style="{DynamicResource MoeButtonStyle}"
+                            Margin="8,0,0,0" Command="{Binding OpenLogDirectoryCommand}"/>
+                    <!-- 文件不存在时由命令的 CanExecute 自动禁用 -->
+                    <Button Content="📄 打开 dsh 日志文件" Style="{DynamicResource MoeButtonStyle}"
+                            Margin="8,0,0,0" Command="{Binding OpenLogFileCommand}"/>
+                </StackPanel>
+
+                <!-- 左侧：自动滚动开关 + 来源过滤 -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <CheckBox Content="自动滚动" IsChecked="{Binding IsAutoScrollEnabled}"
+                              Foreground="{DynamicResource TextSecondaryBrush}"
+                              FontSize="12.5" VerticalAlignment="Center"
+                              ToolTip="开启后新日志会自动滚到底部；向上翻看历史时可关闭"/>
+                    <TextBlock Text="来源：" Style="{DynamicResource MutedTextStyle}"
+                               Margin="18,0,6,0" VerticalAlignment="Center"/>
+                    <ComboBox ItemsSource="{Binding SourceFilters}"
+                              SelectedItem="{Binding SelectedSourceFilter}"
+                              Style="{StaticResource InlineComboStyle}"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- ============ 日志列表 ============ -->
+        <Border Grid.Row="2" Style="{DynamicResource MoeCardStyle}" Padding="14,12">
+            <!-- 追加新行时由 code-behind 自动滚动到底部（延迟到布局完成后执行） -->
+            <ScrollViewer x:Name="LogScrollViewer"
+                          VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                          CanContentScroll="True">
+                <ItemsControl ItemsSource="{Binding Entries}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <!-- 等宽字体逐行展示「[时间] [来源] 内容」；颜色按来源 / 是否错误区分 -->
+                            <TextBlock Text="{Binding DisplayText, Mode=OneWay}"
+                                       FontFamily="Consolas" FontSize="12"
+                                       TextWrapping="NoWrap" Margin="0,1">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <!-- 默认（面板）：主文字色 -->
+                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                        <Style.Triggers>
+                                            <!-- dsh 输出：浅蓝 -->
+                                            <DataTrigger Binding="{Binding Source, Mode=OneWay}" Value="dsh">
+                                                <Setter Property="Foreground" Value="{DynamicResource WhaleBlueLightBrush}"/>
+                                            </DataTrigger>
+                                            <!-- 错误类（含失败 / 错误 / Error）：粉色高亮；声明在后，优先级高于来源色 -->
+                                            <DataTrigger Binding="{Binding IsError, Mode=OneWay}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource PinkAccentBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,338 @@
+<UserControl x:Class="DshManager.Views.PersonaView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <!-- 布尔 → 可见性：用于「默认 / 随附」徽章与仅新建态可见的控件 -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        <!-- 隐式 ListBox：透明底、无边框，融入毛玻璃卡片 -->
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        </Style>
+
+        <!-- 隐式 ListBoxItem：圆角悬停 / 选中高亮 -->
+        <Style TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" CornerRadius="8" Background="Transparent" Padding="4,2">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SelectedNavBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverOverlayBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 「默认」徽章：绿底深字 -->
+        <Style x:Key="DefaultBadgeStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource OkGreenBrush}"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="6,1"/>
+            <Setter Property="Margin" Value="7,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- 「随附」徽章：半透明白底浅字 -->
+        <Style x:Key="ShippedBadgeStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource HoverOverlayBrush}"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="6,1"/>
+            <Setter Property="Margin" Value="6,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- 多行输入框：在 MoeTextBoxStyle 基础上让内容贴顶、支持滚动 -->
+        <Style x:Key="MultiLineTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource MoeTextBoxStyle}">
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Stretch"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource WhaleBlueBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#66FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 表单字段标签 -->
+        <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12.5"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="26,20,26,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ============ 页头 ============ -->
+        <StackPanel Orientation="Horizontal" Margin="2,0,0,10">
+            <TextBlock Text="🎭" FontSize="22" VerticalAlignment="Center"/>
+            <TextBlock Text="人格卡" Style="{DynamicResource SectionTitleStyle}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Text="— 管理 dsh 官方人格预设，设为默认后对新会话生效"
+                       Style="{DynamicResource MutedTextStyle}" Margin="12,4,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- ============ 当前默认 + 环境提示 ============ -->
+        <StackPanel Grid.Row="1" Margin="2,0,0,12">
+            <TextBlock Text="{Binding DefaultSummary}" FontSize="12.5"
+                       Foreground="{DynamicResource WhaleBlueLightBrush}" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding TemplateHint}" FontSize="11.5" Margin="0,4,0,0"
+                       Foreground="{DynamicResource PinkLightBrush}" TextWrapping="Wrap">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <!-- 提示为空时整行折叠，避免占位空白 -->
+                        <Setter Property="Visibility" Value="Visible"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding TemplateHint}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="286"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ============ 左卡片：人格卡列表 ============ -->
+            <Border Style="{DynamicResource MoeCardStyle}" Padding="16,14" Margin="0,0,12,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Margin="2,0,0,10">
+                        <TextBlock Text="人格卡列表" Style="{DynamicResource SectionTitleStyle}" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="✨ 新建" Style="{DynamicResource MoeButtonStyle}"
+                                    Padding="10,5" FontSize="12" Command="{Binding NewCommand}"
+                                    ToolTip="复制一个模板基底，创建属于自己的人格卡"/>
+                            <Button Content="🔄" Style="{DynamicResource MoeButtonStyle}" Margin="6,0,0,0"
+                                    Padding="9,5" FontSize="12" Command="{Binding RefreshCommand}"
+                                    ToolTip="重新扫描人格卡目录"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- 空态提示 -->
+                    <TextBlock Grid.Row="1" Text="这里还没有人格卡，点「新建」创建第一张"
+                               TextWrapping="Wrap" Margin="6,10,6,0"
+                               HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Cards.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <!-- 卡片列表：显示名 + 默认 / 随附徽章 + 描述摘要 -->
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Cards}"
+                             SelectedItem="{Binding SelectedCard}"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="10" Background="#220A1620" Padding="12,9" Margin="2,3"
+                                        ToolTip="{Binding Description}">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="🫧" FontSize="12" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding DisplayName}" FontSize="13" FontWeight="Bold"
+                                                       Foreground="{DynamicResource WhaleBlueLightBrush}"
+                                                       Margin="6,0,0,0" TextTrimming="CharacterEllipsis"/>
+                                            <Border Style="{DynamicResource DefaultBadgeStyle}"
+                                                    Visibility="{Binding IsDefault, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="默认" FontSize="10" FontWeight="Bold" Foreground="#FF06242F"/>
+                                            </Border>
+                                            <Border Style="{DynamicResource ShippedBadgeStyle}"
+                                                    Visibility="{Binding IsShipped, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="随附" FontSize="10"
+                                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding Description}" FontSize="11.5"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                                   Margin="0,4,0,0" TextWrapping="Wrap"
+                                                   TextTrimming="CharacterEllipsis" MaxHeight="32"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <!-- ============ 右卡片：详情 / 编辑 / 启用 ============ -->
+            <Border Grid.Column="1" Style="{DynamicResource MoeCardStyle}" Padding="18,14">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 标题 + 徽章 + 文件位置 -->
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📜" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="人格卡详情" Style="{DynamicResource SectionTitleStyle}" Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                            <Border Style="{DynamicResource DefaultBadgeStyle}"
+                                    Visibility="{Binding SelectedCard.IsDefault, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="当前默认" FontSize="10.5" FontWeight="Bold" Foreground="#FF06242F"/>
+                            </Border>
+                            <Border Style="{DynamicResource ShippedBadgeStyle}"
+                                    Visibility="{Binding SelectedCard.IsShipped, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="随附只读" FontSize="10.5"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            </Border>
+                        </StackPanel>
+                        <TextBlock Text="{Binding SelectedCard.DirectoryPath}" Margin="2,6,0,0"
+                                   Style="{DynamicResource MutedTextStyle}" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+
+                    <!-- 表单：新建时多一行「基础模板」 -->
+                    <ScrollViewer Grid.Row="1" Margin="0,14,0,0" VerticalScrollBarVisibility="Auto">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="92"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- 基础模板：仅新建态可见、可选 -->
+                            <TextBlock Grid.Row="0" Text="基础模板" Style="{DynamicResource FieldLabelStyle}"
+                                       Visibility="{Binding IsNewMode, Converter={StaticResource BoolToVis}}"/>
+                            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,10"
+                                      ItemsSource="{Binding BaseTemplates}"
+                                      SelectedItem="{Binding SelectedBaseTemplate}"
+                                      DisplayMemberPath="DisplayName"
+                                      IsEnabled="{Binding IsNewMode}"
+                                      Padding="8,5"
+                                      Background="#330A1620" Foreground="{DynamicResource TextPrimaryBrush}"
+                                      BorderBrush="{DynamicResource BorderSoftBrush}"
+                                      ToolTip="新建时会整目录复制这个基底（含工具与技能），只替换人格正文"
+                                      Visibility="{Binding IsNewMode, Converter={StaticResource BoolToVis}}"/>
+
+                            <!-- 人格卡 id：新建时可填，其余时候只读展示 -->
+                            <TextBlock Grid.Row="1" Text="人格卡 id" Style="{DynamicResource FieldLabelStyle}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,10"
+                                     Style="{DynamicResource MoeTextBoxStyle}"
+                                     Text="{Binding EditId, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding IsNewMode}"
+                                     ToolTip="目录名，只能用小写字母、数字和减号（如 greedy-whale-girl）"/>
+
+                            <!-- 显示名 -->
+                            <TextBlock Grid.Row="2" Text="显示名" Style="{DynamicResource FieldLabelStyle}"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Margin="0,0,0,10"
+                                     Style="{DynamicResource MoeTextBoxStyle}"
+                                     Text="{Binding EditName, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding IsEditable}"/>
+
+                            <!-- 一句话描述 -->
+                            <TextBlock Grid.Row="3" Text="一句话描述" Style="{DynamicResource FieldLabelStyle}"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="0,0,0,10"
+                                     Style="{DynamicResource MoeTextBoxStyle}"
+                                     Text="{Binding EditDescription, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding IsEditable}"/>
+
+                            <!-- 人格正文（写入 agent.cordis.yml 的 persona.prefix） -->
+                            <TextBlock Grid.Row="4" Text="人格正文" Style="{DynamicResource FieldLabelStyle}"
+                                       VerticalAlignment="Top" Margin="0,6,0,0"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" MinHeight="150"
+                                     Style="{DynamicResource MultiLineTextBoxStyle}"
+                                     Text="{Binding EditSystemPrompt, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding IsEditable}"
+                                     ToolTip="AI 会照这个性格说话；换行会被自动压成单行写入 dsh 的 persona.prefix"/>
+                        </Grid>
+                    </ScrollViewer>
+
+                    <!-- 操作按钮行 -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,14,0,0">
+                        <Button Content="💾 保存" Style="{DynamicResource PrimaryButtonStyle}"
+                                Command="{Binding SaveCommand}"/>
+                        <Button Content="✖ 取消新建" Style="{DynamicResource MoeButtonStyle}" Margin="8,0,0,0"
+                                Command="{Binding CancelNewCommand}"
+                                Visibility="{Binding IsNewMode, Converter={StaticResource BoolToVis}}"/>
+                        <Button Content="📄 另存为我的卡" Style="{DynamicResource MoeButtonStyle}" Margin="8,0,0,0"
+                                Command="{Binding SaveAsCopyCommand}"
+                                ToolTip="复制成一张可编辑的用户卡（随附卡只能这样改）"/>
+                        <Button Content="🗑️ 删除" Style="{DynamicResource MoeButtonStyle}" Margin="8,0,0,0"
+                                BorderBrush="{DynamicResource PinkAccentBrush}" BorderThickness="1"
+                                Foreground="{DynamicResource PinkLightBrush}"
+                                Command="{Binding DeleteCommand}"/>
+                        <Button Content="📂 打开卡目录" Style="{DynamicResource MoeButtonStyle}" Margin="8,0,0,0"
+                                Command="{Binding OpenDirectoryCommand}"/>
+                    </StackPanel>
+
+                    <!-- 设为默认：醒目主按钮（dsh 官方启用入口） -->
+                    <Button Grid.Row="3" Content="⭐ 设为新会话默认人格"
+                            Style="{DynamicResource PrimaryButtonStyle}"
+                            Height="40" FontSize="15" HorizontalAlignment="Stretch" Margin="0,12,0,0"
+                            Command="{Binding SetDefaultCommand}"
+                            ToolTip="写入 settings.yaml 的 agent-presets.default；对之后新建的会话生效"/>
+
+                    <!-- 状态提示 -->
+                    <TextBlock Grid.Row="4" Text="{Binding StatusText}" Margin="0,10,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"
+                               TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

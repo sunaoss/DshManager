@@ -1,0 +1,8 @@
+bin/
+obj/
+publish/
+.graphflow/
+.graphflow-cache/
+.trae/
+node_modules/
+*.user

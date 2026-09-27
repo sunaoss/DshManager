@@ -1,0 +1,253 @@
+<UserControl x:Class="DshManager.Views.ChatView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <!-- 内置转换器：把 IsTyping 的 bool 转成 Visible/Collapsed -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+        <!-- 消息气泡样式：助手靠左浅色圆角 / 用户靠右鲸鱼蓝圆角，由 DataTrigger 切换 -->
+        <Style x:Key="BubbleBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource CardBgLightBrush}"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="MaxWidth" Value="520"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsUser}" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WhaleBlueBrush}"/>
+                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 气泡正文：用户消息用深色字（鲸鱼蓝底上更清晰） -->
+        <Style x:Key="BubbleTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsUser}" Value="True">
+                    <Setter Property="Foreground" Value="#FF06242F"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 头像 emoji：助手 🐳 / 用户 🧑 -->
+        <Style x:Key="AvatarTextStyle" TargetType="TextBlock">
+            <Setter Property="Text" Value="🐳"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsUser}" Value="True">
+                    <Setter Property="Text" Value="🧑"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- 页面整体可滚动：外层 ScrollViewer 包住全部内容。
+         水平方向必须 Disabled，否则内容会拿到无限宽度约束，气泡右对齐与 WrapPanel 换行都会失效 -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="26,20,26,24">
+
+            <!-- ============ 顶部标题区 ============ -->
+            <StackPanel Margin="2,0,0,14">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="🐳" FontSize="30" VerticalAlignment="Center"/>
+                    <TextBlock Text="鲸鱼娘聊天助手" FontSize="26" FontWeight="Bold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               Margin="10,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="DeepSeek 娘 · 傲娇嘴甜但很懒，dsh 的问题尽管问她（不许说她胖！）"
+                           Style="{DynamicResource MutedTextStyle}" Margin="0,5,0,0"/>
+            </StackPanel>
+
+            <!-- ============ 上部：对话区卡片 ============ -->
+            <Border Style="{DynamicResource MoeCardStyle}" Padding="16,12">
+                <ScrollViewer x:Name="ChatScrollViewer" Height="420"
+                              VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- 消息列表：气泡按 IsUser 左右分布 -->
+                        <ItemsControl ItemsSource="{Binding Messages}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <!-- 每条消息 = 头像 + 气泡（文字 / 表情包 / 时间），
+                                         整组对齐方向随 IsUser 切换：助手靠左、用户靠右 -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="HorizontalAlignment" Value="Left"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsUser}" Value="True">
+                                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <TextBlock Style="{StaticResource AvatarTextStyle}" Margin="0,0,8,0"/>
+                                        <StackPanel>
+                                            <Border Style="{StaticResource BubbleBorderStyle}">
+                                                <StackPanel>
+                                                    <!-- 正文（可带 Unicode 颜文字与内心戏） -->
+                                                    <TextBlock Style="{StaticResource BubbleTextStyle}" Text="{Binding Text}"/>
+                                                    <!-- 表情包：StickerPath 为空时整图隐藏（降级为纯文字气泡），宽高约 96 -->
+                                                    <Image Source="{Binding StickerPath}" Width="96" Height="96"
+                                                           Stretch="Uniform" Margin="0,8,0,0">
+                                                        <Image.Style>
+                                                            <Style TargetType="Image">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding StickerPath}" Value="{x:Null}">
+                                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Image.Style>
+                                                    </Image>
+                                                </StackPanel>
+                                            </Border>
+                                            <!-- 时间戳 -->
+                                            <TextBlock Text="{Binding TimeText}"
+                                                       Style="{DynamicResource MutedTextStyle}"
+                                                       FontSize="10.5" Margin="2,2,0,0"
+                                                       HorizontalAlignment="Left"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- 正在输入气泡：IsTyping=true 时显示 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,5"
+                                    Visibility="{Binding IsTyping, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="🐳" FontSize="22" Margin="0,0,8,0" VerticalAlignment="Top"/>
+                            <Border Background="{DynamicResource CardBgLightBrush}"
+                                    CornerRadius="12" Padding="12,8" HorizontalAlignment="Left">
+                                <TextBlock Text="正在输入…" FontSize="13"
+                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- ============ 中部：表情包面板 ============ -->
+            <Border Style="{DynamicResource MoeCardStyle}" Padding="16,12" Margin="0,12,0,0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🐟" FontSize="17" VerticalAlignment="Center"/>
+                        <TextBlock Text="表情包（点一下她就发给你哦）" Style="{DynamicResource SectionTitleStyle}"
+                                   Margin="8,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- 表情管理操作行：添加自己的图片 / 用资源管理器打开用户表情目录 -->
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="＋ 添加表情" Style="{DynamicResource MoeButtonStyle}" FontSize="12"
+                                Command="{Binding AddStickersCommand}" Margin="0,0,8,0"/>
+                        <Button Content="📂 表情包目录" Style="{DynamicResource MoeButtonStyle}" FontSize="12"
+                                Command="{Binding OpenStickerDirectoryCommand}"/>
+                    </StackPanel>
+
+                    <!-- 操作结果提示（添加/删除后的中文反馈）；为空时该行不可见 -->
+                    <TextBlock Text="{Binding StickerStatus, Mode=OneWay}" FontSize="11.5"
+                               Foreground="{DynamicResource TextSecondaryBrush}"
+                               TextWrapping="Wrap" Margin="2,8,0,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding StickerStatus}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <!-- 空状态引导：没有任何表情时提示用户去哪里放图 -->
+                    <TextBlock Text="还没有表情包，点「＋ 添加表情」或「📂 表情包目录」放几张图进来～"
+                               FontSize="12" TextWrapping="Wrap" Margin="2,10,0,0"
+                               Foreground="{DynamicResource TextMutedBrush}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Stickers.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <!-- 表情包横向 WrapPanel：每张 76x76，左键点击即由鲸鱼娘发出，右键弹出删除菜单
+                         （ItemsControl 直接放在 StackPanel 内才能拿到有限宽度，内部 WrapPanel 才会换行） -->
+                    <ItemsControl ItemsSource="{Binding Stickers}" Margin="0,10,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Style="{DynamicResource MoeButtonStyle}"
+                                        Command="{Binding DataContext.SendStickerCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        CommandParameter="{Binding}"
+                                        Tag="{Binding DataContext.DeleteStickerCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        Width="76" Height="76" Padding="2" Margin="0,0,8,8">
+                                    <!-- ContextMenu 不在可视化树内，无法直接用 RelativeSource 找到 ItemsControl/VM；
+                                         这里以 PlacementTarget（被右键的 Button）作为中转：
+                                         Button.Tag 上挂着删除命令，Button.DataContext 是该表情路径，
+                                         分别作为 MenuItem 的 Command 与 CommandParameter -->
+                                    <Button.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="🗑 删除表情"
+                                                      Command="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}"/>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                    <Image Source="{Binding}" Width="72" Height="72" Stretch="Uniform"/>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- ============ 下部：输入行 ============ -->
+            <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <!-- 输入框：Enter 直接发送（code-behind 处理 KeyDown） -->
+                <TextBox Style="{DynamicResource MoeTextBoxStyle}" FontSize="13.5"
+                         Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"
+                         KeyDown="OnInputKeyDown"/>
+                <Button Grid.Column="1" Content="✉ 发送" Style="{DynamicResource PrimaryButtonStyle}"
+                        Command="{Binding SendCommand}" Margin="8,0,0,0"/>
+            </Grid>
+
+            <!-- ============ 快捷问题行 ============ -->
+            <StackPanel Margin="0,10,0,0">
+                <TextBlock Text="💡 不知道问什么？戳这里～" Style="{DynamicResource MutedTextStyle}"/>
+                <!-- ItemsControl 直接放 StackPanel 内拿到有限宽度，内部 WrapPanel 才能正确换行 -->
+                <ItemsControl ItemsSource="{Binding QuickQuestions}" Margin="0,6,0,0">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{DynamicResource MoeButtonStyle}" FontSize="12"
+                                    Content="{Binding}" Margin="0,0,8,8"
+                                    Command="{Binding DataContext.AskCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                    CommandParameter="{Binding}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

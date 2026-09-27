@@ -1,0 +1,10 @@
+# dsh-memory-probe —— headless 一次性任务模式的 --patch 覆盖清单。
+# 作用：把探针插入 headless profile 树的根层，用于验证「挂在 profile 层的
+# 自定义插件能否收到 agent 会话事件」。
+#
+# 注意：--patch 覆盖里的相对路径基准不是本文件所在目录，因此这里必须使用
+# 绝对 file:// URL。下面的路径是示例，请替换成你自己的 dsh HOME
+# （若路径含单引号等 YAML 特殊字符，用双引号包裹标量即可）。
+- insert:
+    - id: memory-probe
+      name: "file:///C:/Users/me/.dsh/profiles/web/plugins/dsh-memory-probe/index.js"

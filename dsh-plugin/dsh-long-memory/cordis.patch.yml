@@ -1,0 +1,10 @@
+# 挂载大容量长期记忆插件（name 从 profile 的 node_modules 解析）。
+# config 为组合层默认值（base）：schema 默认 → 本 base → 用户 settings.yaml，
+# 因此下面这些值都能被 <DSH_HOME>/settings.yaml 的 long-memory 段覆盖。
+- insert:
+    - id: long-memory
+      name: dsh-long-memory
+      config:
+        maxBytes: 262144
+        maxSourceBytes: 2097152
+        enabled: true

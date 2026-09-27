@@ -1,0 +1,251 @@
+<UserControl x:Class="DshManager.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="26,20,26,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 页头 -->
+        <StackPanel Orientation="Horizontal" Margin="2,0,0,14">
+            <TextBlock Text="🛠️" FontSize="22" VerticalAlignment="Center"/>
+            <TextBlock Text="设置" Style="{DynamicResource SectionTitleStyle}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Text="— 外观与运行" Style="{DynamicResource MutedTextStyle}" Margin="12,4,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <!-- ============ 壁纸卡片 ============ -->
+                <Border Style="{DynamicResource MoeCardStyle}" Padding="22,20" Margin="0,0,0,14">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🖼️" FontSize="19" VerticalAlignment="Center"/>
+                            <TextBlock Text="壁纸" Style="{DynamicResource SectionTitleStyle}" Margin="9,0,0,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="为毛玻璃窗口披上鲸鱼娘的二次元背景" Style="{DynamicResource MutedTextStyle}"
+                                       Margin="14,4,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- 壁纸预览 -->
+                        <Border Height="150" CornerRadius="12" Background="#2E0A1620"
+                                BorderBrush="{DynamicResource BorderSoftBrush}" BorderThickness="1"
+                                Margin="0,16,0,0" ClipToBounds="True">
+                            <Grid>
+                                <TextBlock Text="🖼️ 未选择壁纸"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
+                                            <!-- 有壁纸预览时隐藏占位提示 -->
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding WallpaperPreview}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <Image Source="{Binding WallpaperPreview}" Stretch="UniformToFill"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- 选择壁纸按钮 + 当前文件 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                            <Button Content="✨ 选择壁纸图片" Style="{DynamicResource PrimaryButtonStyle}"
+                                    Command="{Binding PickWallpaperCommand}"/>
+                            <TextBlock Text="{Binding WallpaperFileName}" Style="{DynamicResource MutedTextStyle}"
+                                       VerticalAlignment="Center" Margin="14,0,0,0"
+                                       TextTrimming="CharacterEllipsis" MaxWidth="300"/>
+                        </StackPanel>
+
+                        <!-- 启用壁纸开关 -->
+                        <Grid Margin="0,18,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="启用壁纸" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="关闭后使用默认的深海渐变背景" Style="{DynamicResource MutedTextStyle}" Margin="0,3,0,0"/>
+                            </StackPanel>
+                            <ToggleButton Grid.Column="1" VerticalAlignment="Center"
+                                          IsChecked="{Binding IsWallpaperEnabled}"
+                                          Style="{DynamicResource MoeToggleSwitchStyle}"/>
+                        </Grid>
+
+                        <!-- 模糊度滑块（0~30） -->
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="46"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="模糊度" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="磨砂玻璃朦胧感" Style="{DynamicResource MutedTextStyle}" Margin="0,3,0,0"/>
+                            </StackPanel>
+                            <Slider Grid.Column="1" VerticalAlignment="Center" Margin="10,0"
+                                    Minimum="0" Maximum="30"
+                                    Value="{Binding WallpaperBlur}"
+                                    Style="{DynamicResource MoeSliderStyle}"/>
+                            <TextBlock Grid.Column="2" Text="{Binding WallpaperBlur, StringFormat={}{0:F0}}"
+                                       FontSize="14" FontWeight="Bold" Foreground="{DynamicResource WhaleBlueBrush}"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <!-- 透明度滑块（0.3~1） -->
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="46"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="透明度" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="壁纸与背景的融合程度" Style="{DynamicResource MutedTextStyle}" Margin="0,3,0,0"/>
+                            </StackPanel>
+                            <Slider Grid.Column="1" VerticalAlignment="Center" Margin="10,0"
+                                    Minimum="0.3" Maximum="1.0"
+                                    Value="{Binding WallpaperOpacity}"
+                                    Style="{DynamicResource MoeSliderStyle}"/>
+                            <TextBlock Grid.Column="2" Text="{Binding WallpaperOpacity, StringFormat={}{0:F2}}"
+                                       FontSize="14" FontWeight="Bold" Foreground="{DynamicResource WhaleBlueBrush}"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============ 服务端口卡片 ============ -->
+                <Border Style="{DynamicResource MoeCardStyle}" Padding="22,20" Margin="0,0,0,14">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🔌" FontSize="19" VerticalAlignment="Center"/>
+                            <TextBlock Text="服务端口" Style="{DynamicResource SectionTitleStyle}" Margin="9,0,0,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="dsh Web UI 的监听端口" Style="{DynamicResource MutedTextStyle}"
+                                       Margin="14,4,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Grid Margin="0,18,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="130"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="DSH 端口" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="DeepSeek Harness Web UI 端口，默认 3080；修改后需重启 dsh 生效"
+                                           Style="{DynamicResource MutedTextStyle}" Margin="0,3,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <!-- 仅在失焦 / 回车时回写，避免输入过程中把半截数字当成端口保存 -->
+                            <TextBox Grid.Column="1" Style="{DynamicResource MoeTextBoxStyle}"
+                                     Text="{Binding Port, UpdateSourceTrigger=LostFocus}"
+                                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============ dsh 安装位置卡片 ============ -->
+                <Border Style="{DynamicResource MoeCardStyle}" Padding="22,20" Margin="0,0,0,14">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📍" FontSize="19" VerticalAlignment="Center"/>
+                            <TextBlock Text="dsh 安装位置" Style="{DynamicResource SectionTitleStyle}" Margin="9,0,0,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="自动搜索不到时，可在这里手动指定" Style="{DynamicResource MutedTextStyle}"
+                                       Margin="14,4,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <TextBlock Text="留空 = 自动搜索；自动搜索不到时可手动指定 dsh 包目录（含 package.json 的那个 @deepseek-ai\dsh 目录）或启动器路径"
+                                   Style="{DynamicResource MutedTextStyle}" Margin="0,14,0,0" TextWrapping="Wrap"/>
+
+                        <!-- 手动指定路径：即时持久化（与端口一致，无需保存按钮） -->
+                        <TextBox Style="{DynamicResource MoeTextBoxStyle}" Margin="0,10,0,0"
+                                 Text="{Binding InstallPathOverride, UpdateSourceTrigger=PropertyChanged}"
+                                 ToolTip="{Binding InstallPathOverride}"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                            <Button Content="📂 浏览…" Style="{DynamicResource PrimaryButtonStyle}"
+                                    Command="{Binding PickInstallPathCommand}"/>
+                            <Button Content="🧹 清除" Style="{DynamicResource MoeButtonStyle}" Margin="10,0,0,0"
+                                    Command="{Binding ClearInstallPathCommand}"/>
+                            <TextBlock Text="修改后：重启面板或点首页「刷新」后生效"
+                                       Style="{DynamicResource MutedTextStyle}" VerticalAlignment="Center"
+                                       Margin="14,0,0,0" TextWrapping="Wrap"/>
+                        </StackPanel>
+
+                        <!-- ============ 锁定位置（面板记住的安装位置） ============ -->
+                        <Border Background="#22000000" CornerRadius="10" Padding="14,12" Margin="0,18,0,0"
+                                BorderBrush="{DynamicResource BorderSoftBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="🔒 dsh 安装位置（锁定）" FontSize="13" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="面板会记住这个安装位置并优先使用；失效时自动重新搜索并更新（不弹错误框）。"
+                                           Style="{DynamicResource MutedTextStyle}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+
+                                <!-- 当前锁定路径（只读展示；含 Mode=OneWay 显式声明，避免只读属性绑定的默认行为差异） -->
+                                <TextBlock Margin="0,8,0,0" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource WhaleBlueBrush}" FontWeight="Bold">
+                                    <Run Text="{Binding LockedDshInstallPathText, Mode=OneWay}"/>
+                                </TextBlock>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Button Content="📂 浏览…" Style="{DynamicResource PrimaryButtonStyle}"
+                                            Command="{Binding PickLockedInstallPathCommand}"/>
+                                    <Button Content="🧹 清除锁定（改为自动搜索）" Style="{DynamicResource MoeButtonStyle}"
+                                            Margin="10,0,0,0" Command="{Binding ClearLockedInstallPathCommand}"/>
+                                    <Button Content="🔄 重新搜索" Style="{DynamicResource MoeButtonStyle}"
+                                            Margin="10,0,0,0" Command="{Binding RescanInstallLocationCommand}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding InstallLocationStatusText}" Style="{DynamicResource MutedTextStyle}"
+                                           Margin="0,10,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- ============ 移动 dsh 安装位置 ============ -->
+                        <Border Background="#22000000" CornerRadius="10" Padding="14,12" Margin="0,14,0,0"
+                                BorderBrush="{DynamicResource BorderSoftBrush}" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="📦 移动 dsh 安装位置" FontSize="13" FontWeight="Bold"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                <TextBlock Text="把整个安装目录（含 node_modules）复制到新位置：先复制 → 校验 → 再删源，中途失败不会两边都不完整。搬运期间请勿启动 dsh。"
+                                           Style="{DynamicResource MutedTextStyle}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Button Content="📦 选择目标文件夹并搬运" Style="{DynamicResource PrimaryButtonStyle}"
+                                            Command="{Binding MoveDshInstallCommand}"/>
+                                    <Button Content="✋ 取消搬运" Style="{DynamicResource MoeButtonStyle}" Margin="10,0,0,0"
+                                            Command="{Binding CancelMoveCommand}"/>
+                                </StackPanel>
+
+                                <!-- 搬运进度（仅搬运中显示） -->
+                                <StackPanel Visibility="{Binding MoveProgressVisibility, Mode=OneWay}" Margin="0,12,0,0">
+                                    <ProgressBar Height="8" BorderThickness="0" Minimum="0" Maximum="100"
+                                                 Value="{Binding MoveProgressPercent, Mode=OneWay}"
+                                                 Foreground="{DynamicResource WhaleBlueBrush}"
+                                                 Background="{DynamicResource BorderSoftBrush}"/>
+                                    <TextBlock Text="{Binding MoveProgressPercent, Mode=OneWay, StringFormat={}{0}%}"
+                                               Style="{DynamicResource MutedTextStyle}" Margin="0,6,0,0"/>
+                                    <TextBlock Text="{Binding MoveProgressText, Mode=OneWay}"
+                                               Style="{DynamicResource MutedTextStyle}" Margin="0,2,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============ 关于卡片 ============ -->
+                <Border Style="{DynamicResource MoeCardStyle}" Padding="22,20">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🐳" FontSize="19" VerticalAlignment="Center"/>
+                            <TextBlock Text="关于鲸鱼娘" Style="{DynamicResource SectionTitleStyle}" Margin="9,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock Text="DeepSeek Harness 管理面板 · 二次元卡通毛玻璃主题"
+                                   Style="{DynamicResource MutedTextStyle}" Margin="0,12,0,0"/>
+                        <TextBlock Text="所有设置自动保存至 Data/settings.json，重启后依然生效"
+                                   Style="{DynamicResource MutedTextStyle}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

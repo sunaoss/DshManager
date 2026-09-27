@@ -1,0 +1,48 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ============================================================
+         二次元萌系调色板：鲸鱼蓝主色 + 深海深色底 + 粉点缀 + 白字
+         所有颜色/画刷统一以 x:Key 定义，控件样式与页面全部引用 Key。
+         ============================================================ -->
+
+    <!-- 主色：鲸鱼蓝 -->
+    <Color x:Key="WhaleBlueColor">#FF4FC3F7</Color>
+    <SolidColorBrush x:Key="WhaleBlueBrush" Color="{StaticResource WhaleBlueColor}"/>
+    <Color x:Key="WhaleBlueLightColor">#FF81D4FA</Color>
+    <SolidColorBrush x:Key="WhaleBlueLightBrush" Color="{StaticResource WhaleBlueLightColor}"/>
+    <Color x:Key="WhaleBlueDarkColor">#FF0288D1</Color>
+    <SolidColorBrush x:Key="WhaleBlueDarkBrush" Color="{StaticResource WhaleBlueDarkColor}"/>
+
+    <!-- 深色底（深海） -->
+    <Color x:Key="DeepBgColor">#FF0F1E29</Color>
+    <SolidColorBrush x:Key="DeepBgBrush" Color="{StaticResource DeepBgColor}"/>
+    <Color x:Key="DeepBg2Color">#FF123548</Color>
+    <SolidColorBrush x:Key="DeepBg2Brush" Color="{StaticResource DeepBg2Color}"/>
+
+    <!-- 半透明毛玻璃卡片（#AA 前缀 = 67% 不透明度） -->
+    <SolidColorBrush x:Key="CardBgBrush" Color="#AA0F1E29"/>
+    <SolidColorBrush x:Key="CardBgLightBrush" Color="#B3102A3C"/>
+    <SolidColorBrush x:Key="TitleBarBgBrush" Color="#990A1620"/>
+
+    <!-- 粉点缀 -->
+    <Color x:Key="PinkAccentColor">#FFFF80AB</Color>
+    <SolidColorBrush x:Key="PinkAccentBrush" Color="{StaticResource PinkAccentColor}"/>
+    <Color x:Key="PinkLightColor">#FFFFB7D5</Color>
+    <SolidColorBrush x:Key="PinkLightBrush" Color="{StaticResource PinkLightColor}"/>
+
+    <!-- 文本 -->
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FFFFFFFF"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FFB9D0E4"/>
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#FF7A93A8"/>
+
+    <!-- 通用交互与结构 -->
+    <SolidColorBrush x:Key="BorderSoftBrush" Color="#33FFFFFF"/>
+    <SolidColorBrush x:Key="HoverOverlayBrush" Color="#22FFFFFF"/>
+    <SolidColorBrush x:Key="PressedOverlayBrush" Color="#334FC3F7"/>
+    <SolidColorBrush x:Key="SelectedNavBrush" Color="#554FC3F7"/>
+    <SolidColorBrush x:Key="DarkOverlayBrush" Color="#660A1620"/>
+    <SolidColorBrush x:Key="TrackBgBrush" Color="#33556B7E"/>
+    <SolidColorBrush x:Key="OkGreenBrush" Color="#FF4ADE80"/>
+
+</ResourceDictionary>

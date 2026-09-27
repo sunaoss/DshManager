@@ -1,0 +1,538 @@
+<UserControl x:Class="DshManager.Views.MemoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <UserControl.Resources>
+        <!-- 隐式 ListBox：透明底、无边框，融入毛玻璃卡片 -->
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        </Style>
+
+        <!-- 隐式 ListBoxItem：圆角悬停 / 选中高亮 -->
+        <Style TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="0,2"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" CornerRadius="8" Background="Transparent" Padding="4,2">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SelectedNavBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource WhaleBlueLightBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverOverlayBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 预算占用条：圆角轨道 + 鲸鱼蓝指示块；超预算时转为粉色警示 -->
+        <Style x:Key="BudgetBarStyle" TargetType="ProgressBar">
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="Maximum" Value="100"/>
+            <Setter Property="Foreground" Value="{DynamicResource WhaleBlueBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Border x:Name="PART_Track" CornerRadius="5"
+                                    Background="{DynamicResource TrackBgBrush}"/>
+                            <Border x:Name="PART_Indicator" CornerRadius="5" HorizontalAlignment="Left"
+                                    Background="{TemplateBinding Foreground}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsOverBudget}" Value="True">
+                    <Setter Property="Foreground" Value="{DynamicResource PinkAccentBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 分区内的小标题说明（复用 MutedTextStyle 的弱化观感） -->
+        <Style x:Key="PartHintStyle" TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="10,2,0,0"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        </Style>
+
+        <!-- 大文本编辑器：圆角边框 + 多行滚动（MoeTextBoxStyle 的模板只适配单行，故单独写） -->
+        <Style x:Key="BigEditorBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Background" Value="#330A1620"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderSoftBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="26,20,26,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ============ 页头 ============ -->
+        <StackPanel Orientation="Horizontal" Margin="2,0,0,14">
+            <TextBlock Text="🧠" FontSize="22" VerticalAlignment="Center"/>
+            <TextBlock Text="记忆库" Style="{DynamicResource SectionTitleStyle}" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Text="— 全局 / 项目级 / 扩展记忆（大容量）集中管理"
+                       Style="{DynamicResource MutedTextStyle}" Margin="12,4,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- ============ 三个分区（整页可滚动） ============ -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+
+                <!-- ==================== 分区 A：全局记忆 ==================== -->
+                <Border Style="{DynamicResource MoeCardStyle}" Padding="18,14" Height="430">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Margin="2,0,0,10">
+                            <TextBlock Text="🐬" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="全局记忆" Style="{DynamicResource SectionTitleStyle}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="— DSH 每次开新会话都会读取的长期记忆（AGENTS.md，64KB 预算）"
+                                       Style="{DynamicResource PartHintStyle}"/>
+                        </StackPanel>
+
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="256"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- 左卡片：## 小节（记忆分组） -->
+                            <Border Style="{DynamicResource MoeCardStyle}" Padding="16,14" Margin="0,0,12,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel Orientation="Horizontal" Margin="2,0,0,10">
+                                        <TextBlock Text="📑" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock Text="记忆小节" Style="{DynamicResource SectionTitleStyle}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <!-- 空态提示：文件里没有任何小节时显示 -->
+                                    <TextBlock Grid.Row="1" Text="AGENTS.md 还没有内容，点「新增小节」开始记录"
+                                               TextWrapping="Wrap" Margin="6,10,6,0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Sections.Count}" Value="0">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+
+                                    <!-- 小节列表（选中驱动右侧条目） -->
+                                    <ListBox Grid.Row="1" ItemsSource="{Binding Sections}"
+                                             SelectedItem="{Binding SelectedSection}"
+                                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Margin="8,4">
+                                                    <TextBlock Text="§" FontSize="13" VerticalAlignment="Center"
+                                                               Foreground="{DynamicResource WhaleBlueLightBrush}"/>
+                                                    <TextBlock Text="{Binding}" FontSize="13" Margin="8,0,0,0"
+                                                               VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+
+                                    <!-- 小节操作：名称输入 + 新建 / 重命名 / 删除 -->
+                                    <StackPanel Grid.Row="2" Margin="0,12,0,0">
+                                        <Border Height="1" Background="{DynamicResource BorderSoftBrush}" Margin="0,0,0,10"/>
+                                        <TextBox Style="{DynamicResource MoeTextBoxStyle}"
+                                                 Text="{Binding NewSectionName, UpdateSourceTrigger=PropertyChanged}"
+                                                 ToolTip="输入小节名称后点「新建」或「重命名」">
+                                            <TextBox.InputBindings>
+                                                <KeyBinding Key="Return" Command="{Binding AddSectionCommand}"/>
+                                            </TextBox.InputBindings>
+                                        </TextBox>
+                                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                            <Button Content="＋ 新建" Style="{DynamicResource PrimaryButtonStyle}" Padding="12,7"
+                                                    Command="{Binding AddSectionCommand}"/>
+                                            <Button Content="重命名" Style="{DynamicResource MoeButtonStyle}" Padding="12,7" Margin="8,0,0,0"
+                                                    Command="{Binding RenameSectionCommand}"/>
+                                            <Button Content="删除" Style="{DynamicResource MoeButtonStyle}" Padding="12,7" Margin="8,0,0,0"
+                                                    Foreground="{DynamicResource PinkLightBrush}"
+                                                    Command="{Binding DeleteSectionCommand}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <!-- 右卡片：条目 + 新增条目 -->
+                            <Border Grid.Column="1" Style="{DynamicResource MoeCardStyle}" Padding="18,14">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 当前小节标题 + 条目数 -->
+                                    <StackPanel Orientation="Horizontal" Margin="2,0,0,8">
+                                        <TextBlock Text="📚" FontSize="16" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding SelectedSection, TargetNullValue=未选择小节, FallbackValue=未选择小节}"
+                                                   Style="{DynamicResource SectionTitleStyle}" Margin="8,0,0,0" VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis" MaxWidth="320"/>
+                                        <TextBlock Text="{Binding Items.Count, StringFormat='· 共 {0} 条'}"
+                                                   Style="{DynamicResource MutedTextStyle}" Margin="12,4,0,0" VerticalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <!-- 文件路径 + 预算占用条 -->
+                                    <StackPanel Grid.Row="1" Margin="2,0,0,12">
+                                        <TextBlock Text="{Binding MemoryFilePath}" Style="{DynamicResource MutedTextStyle}"
+                                                   TextTrimming="CharacterEllipsis" ToolTip="{Binding MemoryFilePath}"/>
+                                        <Grid Margin="0,6,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ProgressBar Style="{DynamicResource BudgetBarStyle}" VerticalAlignment="Center"
+                                                         Value="{Binding BudgetPercent}"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding BudgetText}" Margin="10,0,0,0"
+                                                       VerticalAlignment="Center" FontSize="11.5"
+                                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <!-- 条目列表：内联编辑 + 保存 / 删除 -->
+                                    <Grid Grid.Row="2">
+                                        <TextBlock Text="该小节还没有条目，在下方输入后点「添加」"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Items.Count}" Value="0">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <ListBox ItemsSource="{Binding Items}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border CornerRadius="10" Background="#220A1620" Padding="10,8" Margin="2,3">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="*"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBox Style="{DynamicResource MoeTextBoxStyle}"
+                                                                     Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                                                                     VerticalContentAlignment="Center"/>
+                                                            <Button Grid.Column="1" Content="保存" Style="{DynamicResource MoeButtonStyle}"
+                                                                    Padding="12,6" Margin="8,0,0,0" Command="{Binding SaveCommand}"/>
+                                                            <Button Grid.Column="2" Content="删除" Style="{DynamicResource MoeButtonStyle}"
+                                                                    Padding="12,6" Margin="6,0,0,0"
+                                                                    Foreground="{DynamicResource PinkLightBrush}"
+                                                                    Command="{Binding DeleteCommand}"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Grid>
+
+                                    <!-- 新增条目 -->
+                                    <Grid Grid.Row="3" Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Style="{DynamicResource MoeTextBoxStyle}"
+                                                 Text="{Binding NewItemText, UpdateSourceTrigger=PropertyChanged}"
+                                                 ToolTip="输入后按回车或点「添加」；支持多行，每行成为一条">
+                                            <TextBox.InputBindings>
+                                                <KeyBinding Key="Return" Command="{Binding AddItemCommand}"/>
+                                            </TextBox.InputBindings>
+                                        </TextBox>
+                                        <Button Grid.Column="1" Content="＋ 添加条目" Style="{DynamicResource PrimaryButtonStyle}"
+                                                Padding="14,8" Margin="8,0,0,0" Command="{Binding AddItemCommand}"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- ==================== 分区 B：项目级记忆 ==================== -->
+                <Border Style="{DynamicResource MoeCardStyle}" Padding="18,14" Margin="0,14,0,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="2,0,0,10">
+                            <TextBlock Text="📁" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="项目级记忆" Style="{DynamicResource SectionTitleStyle}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="— 项目根到工作目录的 AGENTS.md / CLAUDE.md 指令链"
+                                       Style="{DynamicResource PartHintStyle}"/>
+                        </StackPanel>
+
+                        <!-- 项目目录：输入 + 浏览 / 刷新 / 打开位置 -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Style="{DynamicResource MoeTextBoxStyle}"
+                                     Text="{Binding ProjectDirectory, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="dsh 的工作目录；指令链从项目根（.git 所在层）一直发现到这里">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Return" Command="{Binding RefreshProjectCommand}"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Button Grid.Column="1" Content="📂 浏览…" Style="{DynamicResource MoeButtonStyle}" Padding="12,7"
+                                    Margin="8,0,0,0" Command="{Binding BrowseProjectDirectoryCommand}"/>
+                            <Button Grid.Column="2" Content="刷新" Style="{DynamicResource MoeButtonStyle}" Padding="12,7"
+                                    Margin="8,0,0,0" Command="{Binding RefreshProjectCommand}"/>
+                            <Button Grid.Column="3" Content="打开位置" Style="{DynamicResource MoeButtonStyle}" Padding="12,7"
+                                    Margin="8,0,0,0" Command="{Binding OpenProjectRootCommand}"/>
+                        </Grid>
+
+                        <TextBlock Text="{Binding ProjectRootText}" Style="{DynamicResource MutedTextStyle}"
+                                   Margin="2,10,0,0" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding ProjectTotalText}" Style="{DynamicResource MutedTextStyle}"
+                                   Margin="2,4,0,0" TextWrapping="Wrap"/>
+
+                        <!-- 指令链清单：层级 / 文件 / 大小 / 优先级 + 定位 -->
+                        <Grid Margin="0,10,0,0">
+                            <Border Style="{DynamicResource BigEditorBorderStyle}" Padding="6" MaxHeight="220">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding ProjectFiles}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border CornerRadius="8" Background="#220A1620" Padding="10,7" Margin="2,3">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="150"/>
+                                                            <ColumnDefinition Width="160"/>
+                                                            <ColumnDefinition Width="80"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding ScopeText}" FontSize="12.5" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Grid.Column="1" Text="{Binding FileName}" FontSize="12.5" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Grid.Column="2" Text="{Binding SizeText}" FontSize="12.5" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource WhaleBlueLightBrush}"/>
+                                                        <TextBlock Grid.Column="3" Text="{Binding PriorityText}" FontSize="12.5" VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource TextMutedBrush}"
+                                                                   TextTrimming="CharacterEllipsis"/>
+                                                        <Button Grid.Column="4" Content="定位" Style="{DynamicResource MoeButtonStyle}"
+                                                                Padding="10,5" FontSize="12"
+                                                                Command="{Binding DataContext.OpenInstructionFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"/>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Border>
+
+                            <!-- 空态提示 -->
+                            <TextBlock Text="该目录链下没有指令文件" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource MutedTextStyle}">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ProjectFiles.Count}" Value="0">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+
+                        <!-- 预算：当前生效值 + 调整并保存 -->
+                        <TextBlock Text="{Binding ProjectBudgetText}" Style="{DynamicResource MutedTextStyle}"
+                                   Margin="2,10,0,0" TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock Text="maxBytes" Style="{DynamicResource MutedTextStyle}" VerticalAlignment="Center"/>
+                            <TextBox Style="{DynamicResource MoeTextBoxStyle}" Width="110" Margin="6,0,0,0"
+                                     Text="{Binding ProjectMaxBytesInput, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Text="maxSourceBytes" Style="{DynamicResource MutedTextStyle}" VerticalAlignment="Center" Margin="14,0,0,0"/>
+                            <TextBox Style="{DynamicResource MoeTextBoxStyle}" Width="130" Margin="6,0,0,0"
+                                     Text="{Binding ProjectMaxSourceBytesInput, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Content="保存预算" Style="{DynamicResource PrimaryButtonStyle}" Padding="14,8" Margin="12,0,0,0"
+                                    Command="{Binding SaveProjectBudgetCommand}"
+                                    ToolTip="写入当前生效的人格卡；随附只读人格卡会拒绝；需重启 dsh 生效"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding ProjectStatusText}" Style="{DynamicResource MutedTextStyle}"
+                                   Margin="2,10,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ==================== 分区 C：扩展记忆（大容量） ==================== -->
+                <Border Style="{DynamicResource MoeCardStyle}" Padding="18,14" Margin="0,14,0,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="2,0,0,10">
+                            <TextBlock Text="🐳" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="扩展记忆 · 大容量" Style="{DynamicResource SectionTitleStyle}" Margin="8,0,0,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="— 独立于人格卡的记忆注入插件，容量不受 64KB 限制"
+                                       Style="{DynamicResource PartHintStyle}"/>
+                        </StackPanel>
+
+                        <!-- 内置声明：明确该插件随面板提供，避免用户去插件市场里寻找 -->
+                        <TextBlock Text="🧩 内置插件 · 随面板一起提供，无需联网下载，也不在插件市场里"
+                                   Style="{DynamicResource MutedTextStyle}" Margin="2,0,0,10" TextWrapping="Wrap"/>
+
+                        <!-- 安装状态 + 安装 / 卸载 / 刷新 -->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="●" FontSize="14" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsLongMemoryInstalled}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource OkGreenBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Text="{Binding LongMemoryInstallStateText, Mode=OneWay}"
+                                       Style="{DynamicResource SectionTitleStyle}" FontSize="14" Margin="6,0,0,0"
+                                       VerticalAlignment="Center"/>
+                            <Button Content="一键安装" Style="{DynamicResource PrimaryButtonStyle}" Padding="14,8" Margin="14,0,0,0"
+                                    Command="{Binding InstallLongMemoryCommand}"
+                                    ToolTip="从面板内置的插件文件本地部署到 dsh profile（不需要联网）"/>
+                            <Button Content="卸载" Style="{DynamicResource MoeButtonStyle}" Padding="14,8" Margin="8,0,0,0"
+                                    Foreground="{DynamicResource PinkLightBrush}"
+                                    Command="{Binding UninstallLongMemoryCommand}"/>
+                            <Button Content="刷新" Style="{DynamicResource MoeButtonStyle}" Padding="14,8" Margin="8,0,0,0"
+                                    Command="{Binding RefreshLongMemoryCommand}"/>
+                        </StackPanel>
+
+                        <!-- 部署说明：未安装时说明「内置、本地部署」；已安装时显示部署位置 -->
+                        <TextBlock Text="{Binding LongMemoryDeployHintText, Mode=OneWay}"
+                                   Style="{DynamicResource MutedTextStyle}" Margin="2,8,0,0" TextWrapping="Wrap"/>
+
+                        <!-- 记忆文件路径 + 打开位置 -->
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="记忆文件" Style="{DynamicResource MutedTextStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding LongMemoryMemoryPath}" Margin="8,0,0,0"
+                                       VerticalAlignment="Center" FontSize="12.5"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       TextTrimming="CharacterEllipsis" ToolTip="{Binding LongMemoryMemoryPath}"/>
+                            <Button Grid.Column="2" Content="打开位置" Style="{DynamicResource MoeButtonStyle}" Padding="12,6"
+                                    FontSize="12" Command="{Binding OpenLongMemoryFileCommand}"/>
+                        </Grid>
+
+                        <!-- 大文本编辑器：直接编辑 MEMORY.md 全文 -->
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Style="{DynamicResource BigEditorBorderStyle}">
+                                <TextBox Height="180" AcceptsReturn="True" AcceptsTab="True"
+                                         TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                         Background="Transparent" BorderThickness="0"
+                                         Foreground="{DynamicResource TextPrimaryBrush}"
+                                         CaretBrush="{DynamicResource WhaleBlueBrush}"
+                                         Padding="10,7" FontSize="13" VerticalContentAlignment="Top"
+                                         Text="{Binding LongMemoryText, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="直接编辑记忆全文；保存时会自动备份原文件"/>
+                            </Border>
+                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                <TextBlock Text="{Binding LongMemoryBytesText}" Style="{DynamicResource MutedTextStyle}"
+                                           TextWrapping="Wrap" MaxWidth="180"/>
+                                <Button Content="💾 保存记忆" Style="{DynamicResource PrimaryButtonStyle}" Padding="14,8"
+                                        Margin="0,8,0,0" HorizontalAlignment="Left"
+                                        Command="{Binding SaveLongMemoryTextCommand}"/>
+                                <TextBlock Text="插件按 mtime+size 自动重读，保存后无需重启 dsh"
+                                           Style="{DynamicResource MutedTextStyle}" TextWrapping="Wrap"
+                                           MaxWidth="180" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- 容量设置：maxBytes / maxSourceBytes / enabled -->
+                        <TextBlock Text="{Binding LongMemoryConfigText}" Style="{DynamicResource MutedTextStyle}"
+                                   Margin="0,12,0,0" TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock Text="maxBytes" Style="{DynamicResource MutedTextStyle}" VerticalAlignment="Center"/>
+                            <TextBox Style="{DynamicResource MoeTextBoxStyle}" Width="110" Margin="6,0,0,0"
+                                     Text="{Binding LongMemoryMaxBytesInput, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Text="maxSourceBytes" Style="{DynamicResource MutedTextStyle}" VerticalAlignment="Center" Margin="14,0,0,0"/>
+                            <TextBox Style="{DynamicResource MoeTextBoxStyle}" Width="130" Margin="6,0,0,0"
+                                     Text="{Binding LongMemoryMaxSourceBytesInput, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Text="启用" Style="{DynamicResource MutedTextStyle}" VerticalAlignment="Center" Margin="14,0,0,0"/>
+                            <ToggleButton Style="{DynamicResource MoeToggleSwitchStyle}" VerticalAlignment="Center" Margin="6,0,0,0"
+                                          IsChecked="{Binding LongMemoryEnabled}"/>
+                            <Button Content="保存容量" Style="{DynamicResource PrimaryButtonStyle}" Padding="14,8" Margin="12,0,0,0"
+                                    Command="{Binding SaveLongMemoryConfigCommand}"
+                                    ToolTip="写入 settings.yaml 的 long-memory 段，热生效"/>
+                        </StackPanel>
+
+                        <!-- 运行状态 -->
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="运行状态" Style="{DynamicResource MutedTextStyle}" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="{Binding LongMemoryLogText}" Margin="8,0,0,0"
+                                       VerticalAlignment="Center" FontSize="12.5"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       TextTrimming="CharacterEllipsis" ToolTip="{Binding LongMemoryLogText}"/>
+                            <Button Grid.Column="2" Content="查看日志" Style="{DynamicResource MoeButtonStyle}" Padding="12,6"
+                                    FontSize="12" Command="{Binding OpenLongMemoryLogCommand}"/>
+                        </Grid>
+
+                        <TextBlock Text="说明：该插件独立于人格卡，注入容量不受全局 64KB 预算限制；改完 settings.yaml 热生效，改完 MEMORY.md 无需重启 dsh。"
+                                   Style="{DynamicResource MutedTextStyle}" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding LongMemoryStatusText}" Style="{DynamicResource MutedTextStyle}"
+                                   Margin="0,8,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ============ 底部状态（分区 A 的保存结果） ============ -->
+        <TextBlock Grid.Row="2" Text="{Binding StatusText}" Style="{DynamicResource MutedTextStyle}"
+                   Margin="2,12,0,0" TextTrimming="CharacterEllipsis"/>
+    </Grid>
+</UserControl>

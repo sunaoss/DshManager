@@ -1,0 +1,3784 @@
+{
+  "nodes": [
+    {
+      "id": "dialogue-session:pcdboe",
+      "type": "Decision",
+      "content": "dialogue-session session-c325b131-825d-4692-b6cd-7d0dcfb24672 turns=6 tip=dialogue:pcdboe:0006",
+      "metadata": {
+        "kind": "dialogue-session",
+        "record": "{\"id\":\"dialogue-session:pcdboe\",\"name\":\"session-c325b131-825d-4692-b6cd-7d0dcfb24672\",\"tipTurnId\":\"dialogue:pcdboe:0006\",\"turnCount\":6,\"topicTokens\":[\"assistant\",\"d盘\",\"fill\",\"reply\",\"三四十帧\",\"不对是e\",\"你看看无畏契约把\",\"因为卡让我删了\",\"帧数不稳\",\"我想起来了\",\"我目前玩三角洲有点卡你看看有啥办法没有\",\"是一直低帧\",\"清理一下运行内存\",\"画面肉\"],\"createdAt\":1790517616026,\"updatedAt\":1790518167263}",
+        "name": "session-c325b131-825d-4692-b6cd-7d0dcfb24672"
+      }
+    },
+    {
+      "id": "dialogue:pcdboe:0001",
+      "type": "Decision",
+      "content": "dialogue-turn #1 Q: (assistant reply fill) | A: ⏵ 底细摸完了，给主人算总账 哼，人家给你从头到脚检查了一遍，还真查出点东西。**先说结论：你这台机器的瓶颈不是显卡，是内存，而且有个更隐蔽的坑。** ## 实测数据 | 项目 | 实测值 | 评价 | |---|---|---| | CPU | i7-9750H 6核12线程 (2019年) | 能跑，但偏老 | …",
+      "metadata": {
+        "kind": "dialogue-turn",
+        "record": "{\"id\":\"dialogue:pcdboe:0001\",\"sessionId\":\"dialogue-session:pcdboe\",\"seq\":1,\"userQuery\":\"(assistant reply fill)\",\"assistantReply\":\"⏵ 底细摸完了，给主人算总账 哼，人家给你从头到脚检查了一遍，还真查出点东西。**先说结论：你这台机器的瓶颈不是显卡，是内存，而且有个更隐蔽的坑。** ## 实测数据 | 项目 | 实测值 | 评价 | |---|---|---| | CPU | i7-9750H 6核12线程 (2019年) | 能跑，但偏老 | | 独显 | GTX 1650 4GB，驱动 581.57（2025/10） | 入门级，驱动很新 ✅ | | 内存 | 16GB (8+8) @2667MHz，**插槽有 4 个，空着 2 个** | ⚠️ 关键瓶颈 | | 系统盘 C: | 212GB 只剩 **24.8GB** | 偏紧 | | 电源计划 | Turbo | 已经是最优 ✅ | | 游戏模式 | 没开 | 小问题 | ## 三个真实的问题 **1. 内存被后台吃光了（最要命的）** 你开机跑了一天多，现在已用 **11.2GB / 15.85GB**，只剩 3.84GB 空闲。占内存的大户全在后台挂着： - QQ 开了 **9 个进程**，合计约 1.1GB - 迅雷 **11 个进程**，约 800MB - Wallpaper Engine 动态壁纸 **370MB** - Edge 6 个进程，约 1.4GB - 网易UU加速器、火绒(MSPCManager)、游戏加加… **2. 显示器根本没接在独显上** ``` display_active: Disabled ← NVIDIA 当前没在驱动显示器 pstate: P8, 300MHz, 1.16W ← 独显在睡觉 ``` 你的屏幕是挂在 **Intel UHD 630 核显**上输出的（NCP0036 面板）。所以如果你没在 Windows 图形设置里强制三角洲走独显，它很可能在用核显硬扛——这是掉帧的重灾区。 **3. C 盘只剩 24.8GB** 页面文件（虚拟内存）才分了 9.5GB 而且放在 C 盘。C 盘再满下去，游戏卡加载、卡顿会更严重。 ## 能立刻见效的（能验证的那种） **第一步 · 干净启动一次** 游戏前把这些全关掉：QQ、迅雷、Edge、Wallpaper Engine、游戏加加、网易UU（如果不用）。光这一步大概能腾出 **3~4GB**。 **第二步 · 强制独显** 设置 → 系统 → 屏幕 → 显示卡 → 找到三角洲 → 设为「高性能」。你现在这个游戏不在列表里（我全盘搜了，**没找到三角洲的安装目录**，只有网易UU和MuMu模拟器的残留），所以要先确认它装在哪。 **第三步 · 游戏内设置** GTX 1650 + 1080p 120Hz，画质别硬堆： - 渲染分辨率 100%（别开超采样） - **必开 FSR / DLSS 类的超分**（1650 不支持 DLSS，用 FSR 或游戏自带的时间超分） - 阴影/体积雾/环境光遮蔽 → 中或低 - 材质可以留高（4GB 显存够） - 关掉动态模糊、景深 - 帧率上限锁 60 或 90，别追 120 **第四步 · 硬件上的真解** 你**主板还有 2 个空内存槽**。加一条 8GB 或 16GB DDR4-2667 变成 24/32GB，是这台机器性价比最高的升级，比换显卡划算多了。 --- 不过嘛，光看数据人家还不敢拍板。**你先说说：卡成什么样？** - 是**一直低帧**（三四十帧，画面肉） - 还是**帧数够但一顿一顿**（卡顿掉帧、爆内存那种） - 还是**加载慢、进图卡** - 有没有游戏内自带的性能计数器，或者游戏加加记录的帧数？ 还有——**游戏到底装在哪个盘？** 人家全盘搜都没搜到，是不是装在移动硬盘/别的盘符上了？ 哼，才不是特意查这么细的…是你说\\\"能验证的就验证\\\"嘛。先回答人家，白饭都凉了。\",\"jumped\":false,\"relatedNodeIds\":[],\"createdAt\":1790517616026,\"updatedAt\":1790517616026,\"title\":\"(assistant reply fill)\",\"summary\":\"**先说结论：你这台机器的瓶颈不是显卡，是内存，而且有个更隐蔽的坑\"}",
+        "seq": 1,
+        "sessionId": "dialogue-session:pcdboe",
+        "jumped": false
+      }
+    },
+    {
+      "id": "dialogue:pcdboe:0002",
+      "type": "Decision",
+      "content": "dialogue-turn #2 Q: 我目前玩三角洲有点卡你看看有啥办法没有 | A: (pending)",
+      "metadata": {
+        "kind": "dialogue-turn",
+        "record": "{\"id\":\"dialogue:pcdboe:0002\",\"sessionId\":\"dialogue-session:pcdboe\",\"seq\":2,\"userQuery\":\"我目前玩三角洲有点卡你看看有啥办法没有\",\"assistantReply\":\"\",\"parentTurnId\":\"dialogue:pcdboe:0001\",\"jumped\":false,\"relatedNodeIds\":[],\"createdAt\":1790517622972,\"updatedAt\":1790517622972,\"title\":\"我目前玩三角洲有点卡你看看有啥办法没有\"}",
+        "seq": 2,
+        "sessionId": "dialogue-session:pcdboe",
+        "jumped": false
+      }
+    },
+    {
+      "id": "file:AGENTS.md",
+      "type": "File",
+      "content": "AGENTS.md",
+      "metadata": {
+        "path": "AGENTS.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 6,
+        "sizeBytes": 1628
+      }
+    },
+    {
+      "id": "module:AGENTS",
+      "type": "Module",
+      "content": "AGENTS"
+    },
+    {
+      "id": "symbol:AGENTS.md:ee1a57b4",
+      "type": "Symbol",
+      "content": "section GraphFlow for Claude Code (exported) @AGENTS.md:1 # #1",
+      "metadata": {
+        "name": "GraphFlow for Claude Code",
+        "kind": "section",
+        "exported": true,
+        "line": 1,
+        "file": "AGENTS.md",
+        "signature": "# GraphFlow for Claude Code",
+        "signatureHash": "166d4789",
+        "jsdoc": "#1"
+      }
+    },
+    {
+      "id": "symbol:AGENTS.md:dbd0fc58",
+      "type": "Symbol",
+      "content": "section Recommended setup (exported) @AGENTS.md:5 # #2",
+      "metadata": {
+        "name": "Recommended setup",
+        "kind": "section",
+        "exported": true,
+        "line": 5,
+        "file": "AGENTS.md",
+        "signature": "## Recommended setup",
+        "signatureHash": "c185f5c9",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:AGENTS.md:9108df17",
+      "type": "Symbol",
+      "content": "section Usage guidance (exported) @AGENTS.md:34 # #2",
+      "metadata": {
+        "name": "Usage guidance",
+        "kind": "section",
+        "exported": true,
+        "line": 34,
+        "file": "AGENTS.md",
+        "signature": "## Usage guidance",
+        "signatureHash": "2e20a888",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:AGENTS.md:57948c1",
+      "type": "Symbol",
+      "content": "chunk chunk: GraphFlow for Claude Code (exported) @AGENTS.md:1",
+      "metadata": {
+        "name": "chunk: GraphFlow for Claude Code",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "AGENTS.md",
+        "signature": "# GraphFlow for Claude Code\n\nUse GraphFlow as a local orchestration and context service.",
+        "signatureHash": "474b2980"
+      }
+    },
+    {
+      "id": "symbol:AGENTS.md:54e44a65",
+      "type": "Symbol",
+      "content": "chunk chunk: Recommended setup (exported) @AGENTS.md:6",
+      "metadata": {
+        "name": "chunk: Recommended setup",
+        "kind": "chunk",
+        "exported": true,
+        "line": 6,
+        "file": "AGENTS.md",
+        "signature": "Add a local MCP server entry that launches GraphFlow over stdio:\n\n```json\n{\n  \"mcpServers\": {\n    \"graphflow\": {\n      \"command\": \"npx\",\n      \"args\": [\"-y\", \"--package=@roarpeng/graphflow\", \"graphflow-mcp\"]\n    }\n  }\n}\n```\n\nDuring repository development you can also point Claude Code at this checkout:\n\n```json\n{\n  \"mcpServers\": {\n    \"graphflow\": {\n      \"command\": \"npm\",\n      \"args\": [\"run\", \"start:mcp\"],\n      \"cwd\": \".\"\n    }\n  }\n}\n```",
+        "signatureHash": "504a5cdc"
+      }
+    },
+    {
+      "id": "symbol:AGENTS.md:cf6142a",
+      "type": "Symbol",
+      "content": "chunk chunk: Usage guidance (exported) @AGENTS.md:35",
+      "metadata": {
+        "name": "chunk: Usage guidance",
+        "kind": "chunk",
+        "exported": true,
+        "line": 35,
+        "file": "AGENTS.md",
+        "signature": "- Ask GraphFlow to plan before broad changes: `graphflow_plan`.\n- Ask GraphFlow to compress and anchor code context: `graphflow_context`.\n- Always pass `rootDir` = this project's absolute path. **Never** pass your home directory, AppData, or an unexpanded `${workspaceFolder}` placeholder — GraphFlow refuses unsafe workspace roots. If a call answers `unsafe workspace root`, retry the same call without `rootDir` (the server then uses its configured workspace).\n- Ask GraphFlow to inspect graph state or skill learnings when the repo history matters.\n- After executing work from a `graphflow_run` `executionDescriptor`, **must** call `graphflow_report_outcome` with the `episodeId` from the run result, a `success` boolean, and optional `lessons` to close the skill flywheel loop.\n- Fall back to `graphflow ... --json` only if MCP is not available (including `graphflow --json outcome report <episodeId> <success>`).\n\nDeepSeek Harness: `dsh plugin --profile web add @roarpeng/graphflow` (or `npx @roarpeng/graphflow install` when `~/.dsh` exists).",
+        "signatureHash": "8ad50ab1"
+      }
+    },
+    {
+      "id": "file:GEMINI.md",
+      "type": "File",
+      "content": "GEMINI.md",
+      "metadata": {
+        "path": "GEMINI.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 2,
+        "sizeBytes": 1661
+      }
+    },
+    {
+      "id": "module:GEMINI",
+      "type": "Module",
+      "content": "GEMINI"
+    },
+    {
+      "id": "symbol:GEMINI.md:2744c0ce",
+      "type": "Symbol",
+      "content": "section GraphFlow Context-First Rule (exported) @GEMINI.md:2 # #2",
+      "metadata": {
+        "name": "GraphFlow Context-First Rule",
+        "kind": "section",
+        "exported": true,
+        "line": 2,
+        "file": "GEMINI.md",
+        "signature": "## GraphFlow Context-First Rule",
+        "signatureHash": "a83246bf",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:GEMINI.md:d8ba18a1",
+      "type": "Symbol",
+      "content": "chunk chunk: GraphFlow Context-First Rule (exported) @GEMINI.md:1",
+      "metadata": {
+        "name": "chunk: GraphFlow Context-First Rule",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "GEMINI.md",
+        "signature": "<!-- GRAPHFLOW:BEGIN managed block — edit outside these markers only -->\n## GraphFlow Context-First Rule\n\nGraphFlow is a local code knowledge-graph + context compression MCP server (10 tools).\nBefore broad code exploration, implementation, debugging, review, or architecture\nquestions in this project:\n\n1. Call `graphflow_context` with the task/query first.\n2. Use the returned `summary`, `anchors`, and `tokenBudget` as the primary context.\n3. Read full files only when anchors point there or compressed context is insufficient.\n4. For multi-step or ambiguous work, call `graphflow_plan` before implementing.\n5. After project changes, call `graphflow_index` to keep the graph fresh.\n6. The flywheel auto-closes: pending episodes are backfilled by Claude Code\n   hooks (or `graphflow_report_outcome`) by default; set GRAPHFLOW_AUTO_CAPTURE=0 to opt out.\n\nPass `rootDir` = this project's absolute path. Never pass your home directory, AppData,\nor an unexpanded `${workspaceFolder}` placeholder — GraphFlow refuses unsafe workspace\nroots. If a call answers `unsafe workspace root`, retry it without `rootDir`.\n\nWhen using Cursor `CallMcpTool`, always pass `server` + `toolName` + `arguments`\n(e.g. server `\"graphflow\"` / `\"user-graphflow\"`, toolName `\"graphflow_context\"`).\n\nTools: graphflow_context, graphflow_plan, graphflow_run, graphflow_report_outcome,\ngraphflow_insight, graphflow_index, graphflow_artifact, graphflow_skill_insights,\ngraphflow_skill_guide, graphflow_diagnose.\n\nDo not scan the whole repository or read many large files before trying GraphFlow\ncontext. Treat GraphFlow output as structured, token-saving context.\n<!-- GRAPHFLOW:END -->",
+        "signatureHash": "ba356376"
+      }
+    },
+    {
+      "id": "file:publish/DshManager.deps.json",
+      "type": "File",
+      "content": "publish/DshManager.deps.json",
+      "metadata": {
+        "path": "publish/DshManager.deps.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 37692
+      }
+    },
+    {
+      "id": "module:publish/DshManager.deps",
+      "type": "Module",
+      "content": "publish/DshManager.deps"
+    },
+    {
+      "id": "file:publish/DshManager.runtimeconfig.json",
+      "type": "File",
+      "content": "publish/DshManager.runtimeconfig.json",
+      "metadata": {
+        "path": "publish/DshManager.runtimeconfig.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 535
+      }
+    },
+    {
+      "id": "module:publish/DshManager.runtimeconfig",
+      "type": "Module",
+      "content": "publish/DshManager.runtimeconfig"
+    },
+    {
+      "id": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "type": "File",
+      "content": "publish/dsh-plugin/dsh-long-memory/index.js",
+      "metadata": {
+        "path": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "language": "typescript",
+        "exports": [],
+        "symbolCount": 11,
+        "sizeBytes": 10052
+      }
+    },
+    {
+      "id": "module:publish/dsh-plugin/dsh-long-memory/index",
+      "type": "Module",
+      "content": "publish/dsh-plugin/dsh-long-memory/index"
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:d84feced",
+      "type": "Symbol",
+      "content": "raw export const name = 'long-memory' (exported) @publish/dsh-plugin/dsh-long-memory/index.js:20",
+      "metadata": {
+        "name": "export const name = 'long-memory'",
+        "kind": "raw",
+        "exported": true,
+        "line": 20,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const name = 'long-memory' (exported) @publish/dsh-plugin/dsh-long-memory/index.js:20",
+        "signatureHash": "cdece233"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:310310ab",
+      "type": "Symbol",
+      "content": "raw export const inject = [] (exported) @publish/dsh-plugin/dsh-long-memory/index.js:22",
+      "metadata": {
+        "name": "export const inject = []",
+        "kind": "raw",
+        "exported": true,
+        "line": 22,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const inject = [] (exported) @publish/dsh-plugin/dsh-long-memory/index.js:22",
+        "signatureHash": "407b1c7"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:34c451de",
+      "type": "Symbol",
+      "content": "raw export const Config = z.object({ (exported) @publish/dsh-plugin/dsh-long-memory/index.js:37",
+      "metadata": {
+        "name": "export const Config = z.object({",
+        "kind": "raw",
+        "exported": true,
+        "line": 37,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const Config = z.object({ (exported) @publish/dsh-plugin/dsh-long-memory/index.js:37",
+        "signatureHash": "4d344c98"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:7a98d4c5",
+      "type": "Symbol",
+      "content": "raw function byteLength(value) { @publish/dsh-plugin/dsh-long-memory/index.js:49",
+      "metadata": {
+        "name": "function byteLength(value) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 49,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function byteLength(value) { @publish/dsh-plugin/dsh-long-memory/index.js:49",
+        "signatureHash": "6c8de75e"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:b1453e41",
+      "type": "Symbol",
+      "content": "raw function truncateUtf8(value, maxBytes) { @publish/dsh-plugin/dsh-long-memory/index.js:59",
+      "metadata": {
+        "name": "function truncateUtf8(value, maxBytes) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 59,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function truncateUtf8(value, maxBytes) { @publish/dsh-plugin/dsh-long-memory/index.js:59",
+        "signatureHash": "e6583a39"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:cd2e1f20",
+      "type": "Symbol",
+      "content": "raw function escapeFrameBody(body) { @publish/dsh-plugin/dsh-long-memory/index.js:72",
+      "metadata": {
+        "name": "function escapeFrameBody(body) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 72,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function escapeFrameBody(body) { @publish/dsh-plugin/dsh-long-memory/index.js:72",
+        "signatureHash": "f84b4bcf"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:7179bab8",
+      "type": "Symbol",
+      "content": "raw function log(tag, data) { @publish/dsh-plugin/dsh-long-memory/index.js:77",
+      "metadata": {
+        "name": "function log(tag, data) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 77,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function log(tag, data) { @publish/dsh-plugin/dsh-long-memory/index.js:77",
+        "signatureHash": "dc75cd3c"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:cb5154fd",
+      "type": "Symbol",
+      "content": "raw function normalizeConfig(raw) { @publish/dsh-plugin/dsh-long-memory/index.js:92",
+      "metadata": {
+        "name": "function normalizeConfig(raw) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 92,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function normalizeConfig(raw) { @publish/dsh-plugin/dsh-long-memory/index.js:92",
+        "signatureHash": "6a269c3a"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:d85869f2",
+      "type": "Symbol",
+      "content": "raw function readMemoryFile(path, maxSourceBytes) { @publish/dsh-plugin/dsh-long-memory/index.js:114",
+      "metadata": {
+        "name": "function readMemoryFile(path, maxSourceBytes) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 114,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function readMemoryFile(path, maxSourceBytes) { @publish/dsh-plugin/dsh-long-memory/index.js:114",
+        "signatureHash": "3083913e"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:22f41346",
+      "type": "Symbol",
+      "content": "raw function renderMemoryMessage(raw, config) { @publish/dsh-plugin/dsh-long-memory/index.js:149",
+      "metadata": {
+        "name": "function renderMemoryMessage(raw, config) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 149,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function renderMemoryMessage(raw, config) { @publish/dsh-plugin/dsh-long-memory/index.js:149",
+        "signatureHash": "bbb39b4c"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:a7e93d1d",
+      "type": "Symbol",
+      "content": "raw export function apply(ctx, config) { (exported) @publish/dsh-plugin/dsh-long-memory/index.js:172",
+      "metadata": {
+        "name": "export function apply(ctx, config) {",
+        "kind": "raw",
+        "exported": true,
+        "line": 172,
+        "file": "publish/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export function apply(ctx, config) { (exported) @publish/dsh-plugin/dsh-long-memory/index.js:172",
+        "signatureHash": "3f68a897"
+      }
+    },
+    {
+      "id": "module:node:fs",
+      "type": "Module",
+      "content": "node:fs"
+    },
+    {
+      "id": "module:node:path",
+      "type": "Module",
+      "content": "node:path"
+    },
+    {
+      "id": "module:@deepseek-ai/schemastery",
+      "type": "Module",
+      "content": "@deepseek-ai/schemastery"
+    },
+    {
+      "id": "module:@deepseek-ai/dsh-llm",
+      "type": "Module",
+      "content": "@deepseek-ai/dsh-llm"
+    },
+    {
+      "id": "module:@deepseek-ai/dsh-home-paths",
+      "type": "Module",
+      "content": "@deepseek-ai/dsh-home-paths"
+    },
+    {
+      "id": "file:publish/dsh-plugin/dsh-long-memory/package.json",
+      "type": "File",
+      "content": "publish/dsh-plugin/dsh-long-memory/package.json",
+      "metadata": {
+        "path": "publish/dsh-plugin/dsh-long-memory/package.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 371
+      }
+    },
+    {
+      "id": "module:publish/dsh-plugin/dsh-long-memory/package",
+      "type": "Module",
+      "content": "publish/dsh-plugin/dsh-long-memory/package"
+    },
+    {
+      "id": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "type": "File",
+      "content": "publish/dsh-plugin/dsh-long-memory/README.md",
+      "metadata": {
+        "path": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 12,
+        "sizeBytes": 1901
+      }
+    },
+    {
+      "id": "module:publish/dsh-plugin/dsh-long-memory/README",
+      "type": "Module",
+      "content": "publish/dsh-plugin/dsh-long-memory/README"
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "type": "Symbol",
+      "content": "section dsh-long-memory (exported) @publish/dsh-plugin/dsh-long-memory/README.md:1 # #1",
+      "metadata": {
+        "name": "dsh-long-memory",
+        "kind": "section",
+        "exported": true,
+        "line": 1,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "# dsh-long-memory",
+        "signatureHash": "cbc5b9f3",
+        "jsdoc": "#1"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "type": "Symbol",
+      "content": "section 它做什么 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:6 # #2",
+      "metadata": {
+        "name": "它做什么",
+        "kind": "section",
+        "exported": true,
+        "line": 6,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 它做什么",
+        "signatureHash": "b9471070",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "type": "Symbol",
+      "content": "section 记忆文件放哪 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:15 # #2",
+      "metadata": {
+        "name": "记忆文件放哪",
+        "kind": "section",
+        "exported": true,
+        "line": 15,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 记忆文件放哪",
+        "signatureHash": "34702582",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "type": "Symbol",
+      "content": "section 如何配置 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:21 # #2",
+      "metadata": {
+        "name": "如何配置",
+        "kind": "section",
+        "exported": true,
+        "line": 21,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 如何配置",
+        "signatureHash": "e55d3805",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "type": "Symbol",
+      "content": "section 卸载 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:37 # #2",
+      "metadata": {
+        "name": "卸载",
+        "kind": "section",
+        "exported": true,
+        "line": 37,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 卸载",
+        "signatureHash": "6af46d76",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "type": "Symbol",
+      "content": "section 排查 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:46 # #2",
+      "metadata": {
+        "name": "排查",
+        "kind": "section",
+        "exported": true,
+        "line": 46,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 排查",
+        "signatureHash": "b6e9c204",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "type": "Symbol",
+      "content": "chunk chunk: dsh-long-memory (exported) @publish/dsh-plugin/dsh-long-memory/README.md:1",
+      "metadata": {
+        "name": "chunk: dsh-long-memory",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "# dsh-long-memory\n\n大容量长期记忆插件（DeepSeek Harness / dsh）。它把一份用户自定义的记忆文件，\n作为**独立于人格卡**的长期背景知识，注入到每个会话中。",
+        "signatureHash": "ff97412c"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "type": "Symbol",
+      "content": "chunk chunk: 它做什么 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:7",
+      "metadata": {
+        "name": "chunk: 它做什么",
+        "kind": "chunk",
+        "exported": true,
+        "line": 7,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "- 监听 `agent/pre-step`，在每轮对话的**第 1 步**读取记忆文件并注入一则 user 消息\n  （`<system-reminder>` 包裹，`source.kind = 'long-memory'`）。\n- 注入预算独立于人格卡 / 工作区指令的 64KB，默认 **256KB**。\n- 只注入一次/轮，append-only，对 KV Cache 友好。\n- 文件不存在、内容为空、总开关关闭或纯文件超过读取上限时**不注入**。\n- 任何异常都不会影响 dsh 主流程。",
+        "signatureHash": "c012609b"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "type": "Symbol",
+      "content": "chunk chunk: 记忆文件放哪 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:16",
+      "metadata": {
+        "name": "chunk: 记忆文件放哪",
+        "kind": "chunk",
+        "exported": true,
+        "line": 16,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "默认路径：`<DSH_HOME>/MEMORY.md`（例如 `C:\\Users\\<你>\\.dsh\\MEMORY.md`）。\n\n直接编辑该文件即可，无需重启 dsh —— 插件按 `mtime + size` 判断是否重读。",
+        "signatureHash": "72c98eb9"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "type": "Symbol",
+      "content": "chunk chunk: 如何配置 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:22",
+      "metadata": {
+        "name": "chunk: 如何配置",
+        "kind": "chunk",
+        "exported": true,
+        "line": 22,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "在 `<DSH_HOME>/settings.yaml` 中追加 `long-memory` 段（管理面板亦可通过\nsettings 命名空间写入）：\n\n```yaml\nlong-memory:\n  enabled: true\n  file: C:\\Users\\<你>\\.dsh\\MEMORY.md\n  maxBytes: 524288          # 注入正文上限（字节，默认 262144）\n  maxSourceBytes: 2097152   # 单文件读取上限（默认 2097152）\n```\n\n也可在挂载处（cordis patch 的 `config`）配置同样的字段，作为 `base` 层；\n解析顺序为 **schema 默认 → base → 用户 settings.yaml**。",
+        "signatureHash": "350c0516"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "type": "Symbol",
+      "content": "chunk chunk: 卸载 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:38",
+      "metadata": {
+        "name": "chunk: 卸载",
+        "kind": "chunk",
+        "exported": true,
+        "line": 38,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "```powershell\nnode \"<DSH_HOME>\\profiles\\node_modules\\@deepseek-ai\\dsh\\lib\\bin.js\" plugin --profile web remove dsh-long-memory\n```\n\n或移除 profile 的 `cordis.patch.yml` 中对应的 `long-memory` insert 条目，\n并删除 `profiles\\web\\plugins\\dsh-long-memory\\`（若为 patch 方式挂载）。",
+        "signatureHash": "ee5305e8"
+      }
+    },
+    {
+      "id": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "type": "Symbol",
+      "content": "chunk chunk: 排查 (exported) @publish/dsh-plugin/dsh-long-memory/README.md:47",
+      "metadata": {
+        "name": "chunk: 排查",
+        "kind": "chunk",
+        "exported": true,
+        "line": 47,
+        "file": "publish/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "日志：`<DSH_HOME>/dsh-long-memory.log`\n（记录插件加载、settings 注册、每次注入的 turn/step/字节数/文件路径、异常）。",
+        "signatureHash": "156f8f0f"
+      }
+    },
+    {
+      "id": "file:DshManager.Tests/obj/DshManager.Tests.csproj.nuget.dgspec.json",
+      "type": "File",
+      "content": "DshManager.Tests/obj/DshManager.Tests.csproj.nuget.dgspec.json",
+      "metadata": {
+        "path": "DshManager.Tests/obj/DshManager.Tests.csproj.nuget.dgspec.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 5495
+      }
+    },
+    {
+      "id": "module:DshManager.Tests/obj/DshManager.Tests.csproj.nuget.dgspec",
+      "type": "Module",
+      "content": "DshManager.Tests/obj/DshManager.Tests.csproj.nuget.dgspec"
+    },
+    {
+      "id": "file:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.deps.json",
+      "type": "File",
+      "content": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.deps.json",
+      "metadata": {
+        "path": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.deps.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 2859
+      }
+    },
+    {
+      "id": "module:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.deps",
+      "type": "Module",
+      "content": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.deps"
+    },
+    {
+      "id": "file:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.runtimeconfig.json",
+      "type": "File",
+      "content": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.runtimeconfig.json",
+      "metadata": {
+        "path": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.runtimeconfig.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 453
+      }
+    },
+    {
+      "id": "module:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.runtimeconfig",
+      "type": "Module",
+      "content": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.runtimeconfig"
+    },
+    {
+      "id": "file:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.deps.json",
+      "type": "File",
+      "content": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.deps.json",
+      "metadata": {
+        "path": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.deps.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 75486
+      }
+    },
+    {
+      "id": "module:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.deps",
+      "type": "Module",
+      "content": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.deps"
+    },
+    {
+      "id": "file:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.runtimeconfig.json",
+      "type": "File",
+      "content": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.runtimeconfig.json",
+      "metadata": {
+        "path": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.runtimeconfig.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 454
+      }
+    },
+    {
+      "id": "module:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.runtimeconfig",
+      "type": "Module",
+      "content": "DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.runtimeconfig"
+    },
+    {
+      "id": "file:DshManager/Styles/README.md",
+      "type": "File",
+      "content": "DshManager/Styles/README.md",
+      "metadata": {
+        "path": "DshManager/Styles/README.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 2,
+        "sizeBytes": 232
+      }
+    },
+    {
+      "id": "module:DshManager/Styles/README",
+      "type": "Module",
+      "content": "DshManager/Styles/README"
+    },
+    {
+      "id": "symbol:DshManager/Styles/README.md:e3288205",
+      "type": "Symbol",
+      "content": "section Styles 目录 (exported) @DshManager/Styles/README.md:1 # #1",
+      "metadata": {
+        "name": "Styles 目录",
+        "kind": "section",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/Styles/README.md",
+        "signature": "# Styles 目录",
+        "signatureHash": "bc1bc75a",
+        "jsdoc": "#1"
+      }
+    },
+    {
+      "id": "symbol:DshManager/Styles/README.md:d29d2d12",
+      "type": "Symbol",
+      "content": "chunk chunk: Styles 目录 (exported) @DshManager/Styles/README.md:1",
+      "metadata": {
+        "name": "chunk: Styles 目录",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/Styles/README.md",
+        "signature": "# Styles 目录\n\n用于存放全局样式与资源字典（ResourceDictionary），例如：\n- 全局配色、字体、控件样式\n- 二次元卡通 UI 相关主题资源\n\n后续 UI 美化任务会在此目录添加样式文件。",
+        "signatureHash": "8ac9866"
+      }
+    },
+    {
+      "id": "file:DshManager/obj/DshManager.csproj.nuget.dgspec.json",
+      "type": "File",
+      "content": "DshManager/obj/DshManager.csproj.nuget.dgspec.json",
+      "metadata": {
+        "path": "DshManager/obj/DshManager.csproj.nuget.dgspec.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 3229
+      }
+    },
+    {
+      "id": "module:DshManager/obj/DshManager.csproj.nuget.dgspec",
+      "type": "Module",
+      "content": "DshManager/obj/DshManager.csproj.nuget.dgspec"
+    },
+    {
+      "id": "file:DshManager/obj/DshManager_31evhsx2_wpftmp.csproj.nuget.dgspec.json",
+      "type": "File",
+      "content": "DshManager/obj/DshManager_31evhsx2_wpftmp.csproj.nuget.dgspec.json",
+      "metadata": {
+        "path": "DshManager/obj/DshManager_31evhsx2_wpftmp.csproj.nuget.dgspec.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 2534
+      }
+    },
+    {
+      "id": "module:DshManager/obj/DshManager_31evhsx2_wpftmp.csproj.nuget.dgspec",
+      "type": "Module",
+      "content": "DshManager/obj/DshManager_31evhsx2_wpftmp.csproj.nuget.dgspec"
+    },
+    {
+      "id": "file:DshManager/obj/DshManager_e5ncvoqg_wpftmp.csproj.nuget.dgspec.json",
+      "type": "File",
+      "content": "DshManager/obj/DshManager_e5ncvoqg_wpftmp.csproj.nuget.dgspec.json",
+      "metadata": {
+        "path": "DshManager/obj/DshManager_e5ncvoqg_wpftmp.csproj.nuget.dgspec.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 2534
+      }
+    },
+    {
+      "id": "module:DshManager/obj/DshManager_e5ncvoqg_wpftmp.csproj.nuget.dgspec",
+      "type": "Module",
+      "content": "DshManager/obj/DshManager_e5ncvoqg_wpftmp.csproj.nuget.dgspec"
+    },
+    {
+      "id": "file:DshManager/obj/DshManager_eenpw3mw_wpftmp.csproj.nuget.dgspec.json",
+      "type": "File",
+      "content": "DshManager/obj/DshManager_eenpw3mw_wpftmp.csproj.nuget.dgspec.json",
+      "metadata": {
+        "path": "DshManager/obj/DshManager_eenpw3mw_wpftmp.csproj.nuget.dgspec.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 2660
+      }
+    },
+    {
+      "id": "module:DshManager/obj/DshManager_eenpw3mw_wpftmp.csproj.nuget.dgspec",
+      "type": "Module",
+      "content": "DshManager/obj/DshManager_eenpw3mw_wpftmp.csproj.nuget.dgspec"
+    },
+    {
+      "id": "file:DshManager/obj/DshManager_faro3ypo_wpftmp.csproj.nuget.dgspec.json",
+      "type": "File",
+      "content": "DshManager/obj/DshManager_faro3ypo_wpftmp.csproj.nuget.dgspec.json",
+      "metadata": {
+        "path": "DshManager/obj/DshManager_faro3ypo_wpftmp.csproj.nuget.dgspec.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 2660
+      }
+    },
+    {
+      "id": "module:DshManager/obj/DshManager_faro3ypo_wpftmp.csproj.nuget.dgspec",
+      "type": "Module",
+      "content": "DshManager/obj/DshManager_faro3ypo_wpftmp.csproj.nuget.dgspec"
+    },
+    {
+      "id": "file:DshManager/obj/DshManager_nwuhxhkk_wpftmp.csproj.nuget.dgspec.json",
+      "type": "File",
+      "content": "DshManager/obj/DshManager_nwuhxhkk_wpftmp.csproj.nuget.dgspec.json",
+      "metadata": {
+        "path": "DshManager/obj/DshManager_nwuhxhkk_wpftmp.csproj.nuget.dgspec.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 2660
+      }
+    },
+    {
+      "id": "module:DshManager/obj/DshManager_nwuhxhkk_wpftmp.csproj.nuget.dgspec",
+      "type": "Module",
+      "content": "DshManager/obj/DshManager_nwuhxhkk_wpftmp.csproj.nuget.dgspec"
+    },
+    {
+      "id": "file:DshManager/obj/project.assets.json",
+      "type": "File",
+      "content": "DshManager/obj/project.assets.json",
+      "metadata": {
+        "path": "DshManager/obj/project.assets.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 12382
+      }
+    },
+    {
+      "id": "module:DshManager/obj/project.assets",
+      "type": "Module",
+      "content": "DshManager/obj/project.assets"
+    },
+    {
+      "id": "file:DshManager/Models/README.md",
+      "type": "File",
+      "content": "DshManager/Models/README.md",
+      "metadata": {
+        "path": "DshManager/Models/README.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 2,
+        "sizeBytes": 185
+      }
+    },
+    {
+      "id": "module:DshManager/Models/README",
+      "type": "Module",
+      "content": "DshManager/Models/README"
+    },
+    {
+      "id": "symbol:DshManager/Models/README.md:ffb5e37d",
+      "type": "Symbol",
+      "content": "section Models 目录 (exported) @DshManager/Models/README.md:1 # #1",
+      "metadata": {
+        "name": "Models 目录",
+        "kind": "section",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/Models/README.md",
+        "signature": "# Models 目录",
+        "signatureHash": "27abacd2",
+        "jsdoc": "#1"
+      }
+    },
+    {
+      "id": "symbol:DshManager/Models/README.md:ef2a8e8a",
+      "type": "Symbol",
+      "content": "chunk chunk: Models 目录 (exported) @DshManager/Models/README.md:1",
+      "metadata": {
+        "name": "chunk: Models 目录",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/Models/README.md",
+        "signature": "# Models 目录\n\n用于存放领域模型类（进程信息、配置项、记忆条目、人格定义等）。\n\n后续进程管理、配置管理等任务会在此目录添加模型。",
+        "signatureHash": "bdc568d5"
+      }
+    },
+    {
+      "id": "file:DshManager/Data/README.md",
+      "type": "File",
+      "content": "DshManager/Data/README.md",
+      "metadata": {
+        "path": "DshManager/Data/README.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 2,
+        "sizeBytes": 253
+      }
+    },
+    {
+      "id": "module:DshManager/Data/README",
+      "type": "Module",
+      "content": "DshManager/Data/README"
+    },
+    {
+      "id": "symbol:DshManager/Data/README.md:b94bce3d",
+      "type": "Symbol",
+      "content": "section Data 目录 (exported) @DshManager/Data/README.md:1 # #1",
+      "metadata": {
+        "name": "Data 目录",
+        "kind": "section",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/Data/README.md",
+        "signature": "# Data 目录",
+        "signatureHash": "8340c52",
+        "jsdoc": "#1"
+      }
+    },
+    {
+      "id": "symbol:DshManager/Data/README.md:2419d88a",
+      "type": "Symbol",
+      "content": "chunk chunk: Data 目录 (exported) @DshManager/Data/README.md:1",
+      "metadata": {
+        "name": "chunk: Data 目录",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/Data/README.md",
+        "signature": "# Data 目录\n\n本目录用于存放应用运行期生成的 JSON 数据文件，例如：\n\n- 配置数据（设置项、主题偏好等）\n- 记忆库数据\n- 人格数据\n- 聊天记录\n\n后续配置管理等任务会将读写逻辑落在本目录。",
+        "signatureHash": "fdac6288"
+      }
+    },
+    {
+      "id": "file:DshManager/Data/settings.json",
+      "type": "File",
+      "content": "DshManager/Data/settings.json",
+      "metadata": {
+        "path": "DshManager/Data/settings.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 195
+      }
+    },
+    {
+      "id": "module:DshManager/Data/settings",
+      "type": "Module",
+      "content": "DshManager/Data/settings"
+    },
+    {
+      "id": "file:DshManager/bin/Release/net8.0-windows/win-x64/DshManager.deps.json",
+      "type": "File",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/DshManager.deps.json",
+      "metadata": {
+        "path": "DshManager/bin/Release/net8.0-windows/win-x64/DshManager.deps.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 37692
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Release/net8.0-windows/win-x64/DshManager.deps",
+      "type": "Module",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/DshManager.deps"
+    },
+    {
+      "id": "file:DshManager/bin/Release/net8.0-windows/win-x64/DshManager.runtimeconfig.json",
+      "type": "File",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/DshManager.runtimeconfig.json",
+      "metadata": {
+        "path": "DshManager/bin/Release/net8.0-windows/win-x64/DshManager.runtimeconfig.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 535
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Release/net8.0-windows/win-x64/DshManager.runtimeconfig",
+      "type": "Module",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/DshManager.runtimeconfig"
+    },
+    {
+      "id": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "type": "File",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "metadata": {
+        "path": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "language": "typescript",
+        "exports": [],
+        "symbolCount": 11,
+        "sizeBytes": 10052
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index",
+      "type": "Module",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index"
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:d84feced",
+      "type": "Symbol",
+      "content": "raw export const name = 'long-memory' (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:20",
+      "metadata": {
+        "name": "export const name = 'long-memory'",
+        "kind": "raw",
+        "exported": true,
+        "line": 20,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const name = 'long-memory' (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:20",
+        "signatureHash": "6b58d92e"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:310310ab",
+      "type": "Symbol",
+      "content": "raw export const inject = [] (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:22",
+      "metadata": {
+        "name": "export const inject = []",
+        "kind": "raw",
+        "exported": true,
+        "line": 22,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const inject = [] (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:22",
+        "signatureHash": "212f0b42"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:34c451de",
+      "type": "Symbol",
+      "content": "raw export const Config = z.object({ (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:37",
+      "metadata": {
+        "name": "export const Config = z.object({",
+        "kind": "raw",
+        "exported": true,
+        "line": 37,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const Config = z.object({ (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:37",
+        "signatureHash": "115c7c53"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:7a98d4c5",
+      "type": "Symbol",
+      "content": "raw function byteLength(value) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:49",
+      "metadata": {
+        "name": "function byteLength(value) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 49,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function byteLength(value) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:49",
+        "signatureHash": "d0ccc359"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:b1453e41",
+      "type": "Symbol",
+      "content": "raw function truncateUtf8(value, maxBytes) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:59",
+      "metadata": {
+        "name": "function truncateUtf8(value, maxBytes) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 59,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function truncateUtf8(value, maxBytes) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:59",
+        "signatureHash": "deb85934"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:cd2e1f20",
+      "type": "Symbol",
+      "content": "raw function escapeFrameBody(body) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:72",
+      "metadata": {
+        "name": "function escapeFrameBody(body) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 72,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function escapeFrameBody(body) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:72",
+        "signatureHash": "82ff1b8a"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:7179bab8",
+      "type": "Symbol",
+      "content": "raw function log(tag, data) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:77",
+      "metadata": {
+        "name": "function log(tag, data) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 77,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function log(tag, data) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:77",
+        "signatureHash": "4a895ef7"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:cb5154fd",
+      "type": "Symbol",
+      "content": "raw function normalizeConfig(raw) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:92",
+      "metadata": {
+        "name": "function normalizeConfig(raw) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 92,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function normalizeConfig(raw) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:92",
+        "signatureHash": "fa7c4235"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:d85869f2",
+      "type": "Symbol",
+      "content": "raw function readMemoryFile(path, maxSourceBytes) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:114",
+      "metadata": {
+        "name": "function readMemoryFile(path, maxSourceBytes) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 114,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function readMemoryFile(path, maxSourceBytes) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:114",
+        "signatureHash": "779ba263"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:22f41346",
+      "type": "Symbol",
+      "content": "raw function renderMemoryMessage(raw, config) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:149",
+      "metadata": {
+        "name": "function renderMemoryMessage(raw, config) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 149,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function renderMemoryMessage(raw, config) { @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:149",
+        "signatureHash": "5132ab71"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:a7e93d1d",
+      "type": "Symbol",
+      "content": "raw export function apply(ctx, config) { (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:172",
+      "metadata": {
+        "name": "export function apply(ctx, config) {",
+        "kind": "raw",
+        "exported": true,
+        "line": 172,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export function apply(ctx, config) { (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:172",
+        "signatureHash": "173138fc"
+      }
+    },
+    {
+      "id": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/package.json",
+      "type": "File",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/package.json",
+      "metadata": {
+        "path": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/package.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 371
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/package",
+      "type": "Module",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/package"
+    },
+    {
+      "id": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "type": "File",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "metadata": {
+        "path": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 12,
+        "sizeBytes": 1901
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README",
+      "type": "Module",
+      "content": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README"
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "type": "Symbol",
+      "content": "section dsh-long-memory (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:1 # #1",
+      "metadata": {
+        "name": "dsh-long-memory",
+        "kind": "section",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "# dsh-long-memory",
+        "signatureHash": "cbc5b9f3",
+        "jsdoc": "#1"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "type": "Symbol",
+      "content": "section 它做什么 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:6 # #2",
+      "metadata": {
+        "name": "它做什么",
+        "kind": "section",
+        "exported": true,
+        "line": 6,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 它做什么",
+        "signatureHash": "b9471070",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "type": "Symbol",
+      "content": "section 记忆文件放哪 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:15 # #2",
+      "metadata": {
+        "name": "记忆文件放哪",
+        "kind": "section",
+        "exported": true,
+        "line": 15,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 记忆文件放哪",
+        "signatureHash": "34702582",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "type": "Symbol",
+      "content": "section 如何配置 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:21 # #2",
+      "metadata": {
+        "name": "如何配置",
+        "kind": "section",
+        "exported": true,
+        "line": 21,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 如何配置",
+        "signatureHash": "e55d3805",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "type": "Symbol",
+      "content": "section 卸载 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:37 # #2",
+      "metadata": {
+        "name": "卸载",
+        "kind": "section",
+        "exported": true,
+        "line": 37,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 卸载",
+        "signatureHash": "6af46d76",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "type": "Symbol",
+      "content": "section 排查 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:46 # #2",
+      "metadata": {
+        "name": "排查",
+        "kind": "section",
+        "exported": true,
+        "line": 46,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 排查",
+        "signatureHash": "b6e9c204",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "type": "Symbol",
+      "content": "chunk chunk: dsh-long-memory (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:1",
+      "metadata": {
+        "name": "chunk: dsh-long-memory",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "# dsh-long-memory\n\n大容量长期记忆插件（DeepSeek Harness / dsh）。它把一份用户自定义的记忆文件，\n作为**独立于人格卡**的长期背景知识，注入到每个会话中。",
+        "signatureHash": "ff97412c"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "type": "Symbol",
+      "content": "chunk chunk: 它做什么 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:7",
+      "metadata": {
+        "name": "chunk: 它做什么",
+        "kind": "chunk",
+        "exported": true,
+        "line": 7,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "- 监听 `agent/pre-step`，在每轮对话的**第 1 步**读取记忆文件并注入一则 user 消息\n  （`<system-reminder>` 包裹，`source.kind = 'long-memory'`）。\n- 注入预算独立于人格卡 / 工作区指令的 64KB，默认 **256KB**。\n- 只注入一次/轮，append-only，对 KV Cache 友好。\n- 文件不存在、内容为空、总开关关闭或纯文件超过读取上限时**不注入**。\n- 任何异常都不会影响 dsh 主流程。",
+        "signatureHash": "c012609b"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "type": "Symbol",
+      "content": "chunk chunk: 记忆文件放哪 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:16",
+      "metadata": {
+        "name": "chunk: 记忆文件放哪",
+        "kind": "chunk",
+        "exported": true,
+        "line": 16,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "默认路径：`<DSH_HOME>/MEMORY.md`（例如 `C:\\Users\\<你>\\.dsh\\MEMORY.md`）。\n\n直接编辑该文件即可，无需重启 dsh —— 插件按 `mtime + size` 判断是否重读。",
+        "signatureHash": "72c98eb9"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "type": "Symbol",
+      "content": "chunk chunk: 如何配置 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:22",
+      "metadata": {
+        "name": "chunk: 如何配置",
+        "kind": "chunk",
+        "exported": true,
+        "line": 22,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "在 `<DSH_HOME>/settings.yaml` 中追加 `long-memory` 段（管理面板亦可通过\nsettings 命名空间写入）：\n\n```yaml\nlong-memory:\n  enabled: true\n  file: C:\\Users\\<你>\\.dsh\\MEMORY.md\n  maxBytes: 524288          # 注入正文上限（字节，默认 262144）\n  maxSourceBytes: 2097152   # 单文件读取上限（默认 2097152）\n```\n\n也可在挂载处（cordis patch 的 `config`）配置同样的字段，作为 `base` 层；\n解析顺序为 **schema 默认 → base → 用户 settings.yaml**。",
+        "signatureHash": "350c0516"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "type": "Symbol",
+      "content": "chunk chunk: 卸载 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:38",
+      "metadata": {
+        "name": "chunk: 卸载",
+        "kind": "chunk",
+        "exported": true,
+        "line": 38,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "```powershell\nnode \"<DSH_HOME>\\profiles\\node_modules\\@deepseek-ai\\dsh\\lib\\bin.js\" plugin --profile web remove dsh-long-memory\n```\n\n或移除 profile 的 `cordis.patch.yml` 中对应的 `long-memory` insert 条目，\n并删除 `profiles\\web\\plugins\\dsh-long-memory\\`（若为 patch 方式挂载）。",
+        "signatureHash": "ee5305e8"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "type": "Symbol",
+      "content": "chunk chunk: 排查 (exported) @DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:47",
+      "metadata": {
+        "name": "chunk: 排查",
+        "kind": "chunk",
+        "exported": true,
+        "line": 47,
+        "file": "DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "日志：`<DSH_HOME>/dsh-long-memory.log`\n（记录插件加载、settings 注册、每次注入的 turn/step/字节数/文件路径、异常）。",
+        "signatureHash": "156f8f0f"
+      }
+    },
+    {
+      "id": "file:DshManager/bin/Debug/net8.0-windows/DshManager.deps.json",
+      "type": "File",
+      "content": "DshManager/bin/Debug/net8.0-windows/DshManager.deps.json",
+      "metadata": {
+        "path": "DshManager/bin/Debug/net8.0-windows/DshManager.deps.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 2859
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Debug/net8.0-windows/DshManager.deps",
+      "type": "Module",
+      "content": "DshManager/bin/Debug/net8.0-windows/DshManager.deps"
+    },
+    {
+      "id": "file:DshManager/bin/Debug/net8.0-windows/DshManager.runtimeconfig.json",
+      "type": "File",
+      "content": "DshManager/bin/Debug/net8.0-windows/DshManager.runtimeconfig.json",
+      "metadata": {
+        "path": "DshManager/bin/Debug/net8.0-windows/DshManager.runtimeconfig.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 453
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Debug/net8.0-windows/DshManager.runtimeconfig",
+      "type": "Module",
+      "content": "DshManager/bin/Debug/net8.0-windows/DshManager.runtimeconfig"
+    },
+    {
+      "id": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "type": "File",
+      "content": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "metadata": {
+        "path": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "language": "typescript",
+        "exports": [],
+        "symbolCount": 11,
+        "sizeBytes": 10052
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index",
+      "type": "Module",
+      "content": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index"
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:d84feced",
+      "type": "Symbol",
+      "content": "raw export const name = 'long-memory' (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:20",
+      "metadata": {
+        "name": "export const name = 'long-memory'",
+        "kind": "raw",
+        "exported": true,
+        "line": 20,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const name = 'long-memory' (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:20",
+        "signatureHash": "b215aff0"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:310310ab",
+      "type": "Symbol",
+      "content": "raw export const inject = [] (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:22",
+      "metadata": {
+        "name": "export const inject = []",
+        "kind": "raw",
+        "exported": true,
+        "line": 22,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const inject = [] (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:22",
+        "signatureHash": "6f529084"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:34c451de",
+      "type": "Symbol",
+      "content": "raw export const Config = z.object({ (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:37",
+      "metadata": {
+        "name": "export const Config = z.object({",
+        "kind": "raw",
+        "exported": true,
+        "line": 37,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const Config = z.object({ (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:37",
+        "signatureHash": "577215d5"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:7a98d4c5",
+      "type": "Symbol",
+      "content": "raw function byteLength(value) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:49",
+      "metadata": {
+        "name": "function byteLength(value) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 49,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function byteLength(value) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:49",
+        "signatureHash": "b88a171b"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:b1453e41",
+      "type": "Symbol",
+      "content": "raw function truncateUtf8(value, maxBytes) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:59",
+      "metadata": {
+        "name": "function truncateUtf8(value, maxBytes) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 59,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function truncateUtf8(value, maxBytes) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:59",
+        "signatureHash": "65ae17f6"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:cd2e1f20",
+      "type": "Symbol",
+      "content": "raw function escapeFrameBody(body) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:72",
+      "metadata": {
+        "name": "function escapeFrameBody(body) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 72,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function escapeFrameBody(body) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:72",
+        "signatureHash": "e21b550c"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:7179bab8",
+      "type": "Symbol",
+      "content": "raw function log(tag, data) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:77",
+      "metadata": {
+        "name": "function log(tag, data) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 77,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function log(tag, data) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:77",
+        "signatureHash": "b3e2ca79"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:cb5154fd",
+      "type": "Symbol",
+      "content": "raw function normalizeConfig(raw) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:92",
+      "metadata": {
+        "name": "function normalizeConfig(raw) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 92,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function normalizeConfig(raw) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:92",
+        "signatureHash": "78e38ff7"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:d85869f2",
+      "type": "Symbol",
+      "content": "raw function readMemoryFile(path, maxSourceBytes) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:114",
+      "metadata": {
+        "name": "function readMemoryFile(path, maxSourceBytes) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 114,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function readMemoryFile(path, maxSourceBytes) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:114",
+        "signatureHash": "bf37d6a1"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:22f41346",
+      "type": "Symbol",
+      "content": "raw function renderMemoryMessage(raw, config) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:149",
+      "metadata": {
+        "name": "function renderMemoryMessage(raw, config) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 149,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function renderMemoryMessage(raw, config) { @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:149",
+        "signatureHash": "29826af"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:a7e93d1d",
+      "type": "Symbol",
+      "content": "raw export function apply(ctx, config) { (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:172",
+      "metadata": {
+        "name": "export function apply(ctx, config) {",
+        "kind": "raw",
+        "exported": true,
+        "line": 172,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export function apply(ctx, config) { (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:172",
+        "signatureHash": "b79da27a"
+      }
+    },
+    {
+      "id": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/package.json",
+      "type": "File",
+      "content": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/package.json",
+      "metadata": {
+        "path": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/package.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 371
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/package",
+      "type": "Module",
+      "content": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/package"
+    },
+    {
+      "id": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "type": "File",
+      "content": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "metadata": {
+        "path": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 12,
+        "sizeBytes": 1901
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README",
+      "type": "Module",
+      "content": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README"
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "type": "Symbol",
+      "content": "section dsh-long-memory (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:1 # #1",
+      "metadata": {
+        "name": "dsh-long-memory",
+        "kind": "section",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "# dsh-long-memory",
+        "signatureHash": "cbc5b9f3",
+        "jsdoc": "#1"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "type": "Symbol",
+      "content": "section 它做什么 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:6 # #2",
+      "metadata": {
+        "name": "它做什么",
+        "kind": "section",
+        "exported": true,
+        "line": 6,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 它做什么",
+        "signatureHash": "b9471070",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "type": "Symbol",
+      "content": "section 记忆文件放哪 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:15 # #2",
+      "metadata": {
+        "name": "记忆文件放哪",
+        "kind": "section",
+        "exported": true,
+        "line": 15,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 记忆文件放哪",
+        "signatureHash": "34702582",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "type": "Symbol",
+      "content": "section 如何配置 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:21 # #2",
+      "metadata": {
+        "name": "如何配置",
+        "kind": "section",
+        "exported": true,
+        "line": 21,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 如何配置",
+        "signatureHash": "e55d3805",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "type": "Symbol",
+      "content": "section 卸载 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:37 # #2",
+      "metadata": {
+        "name": "卸载",
+        "kind": "section",
+        "exported": true,
+        "line": 37,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 卸载",
+        "signatureHash": "6af46d76",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "type": "Symbol",
+      "content": "section 排查 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:46 # #2",
+      "metadata": {
+        "name": "排查",
+        "kind": "section",
+        "exported": true,
+        "line": 46,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 排查",
+        "signatureHash": "b6e9c204",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "type": "Symbol",
+      "content": "chunk chunk: dsh-long-memory (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:1",
+      "metadata": {
+        "name": "chunk: dsh-long-memory",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "# dsh-long-memory\n\n大容量长期记忆插件（DeepSeek Harness / dsh）。它把一份用户自定义的记忆文件，\n作为**独立于人格卡**的长期背景知识，注入到每个会话中。",
+        "signatureHash": "ff97412c"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "type": "Symbol",
+      "content": "chunk chunk: 它做什么 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:7",
+      "metadata": {
+        "name": "chunk: 它做什么",
+        "kind": "chunk",
+        "exported": true,
+        "line": 7,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "- 监听 `agent/pre-step`，在每轮对话的**第 1 步**读取记忆文件并注入一则 user 消息\n  （`<system-reminder>` 包裹，`source.kind = 'long-memory'`）。\n- 注入预算独立于人格卡 / 工作区指令的 64KB，默认 **256KB**。\n- 只注入一次/轮，append-only，对 KV Cache 友好。\n- 文件不存在、内容为空、总开关关闭或纯文件超过读取上限时**不注入**。\n- 任何异常都不会影响 dsh 主流程。",
+        "signatureHash": "c012609b"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "type": "Symbol",
+      "content": "chunk chunk: 记忆文件放哪 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:16",
+      "metadata": {
+        "name": "chunk: 记忆文件放哪",
+        "kind": "chunk",
+        "exported": true,
+        "line": 16,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "默认路径：`<DSH_HOME>/MEMORY.md`（例如 `C:\\Users\\<你>\\.dsh\\MEMORY.md`）。\n\n直接编辑该文件即可，无需重启 dsh —— 插件按 `mtime + size` 判断是否重读。",
+        "signatureHash": "72c98eb9"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "type": "Symbol",
+      "content": "chunk chunk: 如何配置 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:22",
+      "metadata": {
+        "name": "chunk: 如何配置",
+        "kind": "chunk",
+        "exported": true,
+        "line": 22,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "在 `<DSH_HOME>/settings.yaml` 中追加 `long-memory` 段（管理面板亦可通过\nsettings 命名空间写入）：\n\n```yaml\nlong-memory:\n  enabled: true\n  file: C:\\Users\\<你>\\.dsh\\MEMORY.md\n  maxBytes: 524288          # 注入正文上限（字节，默认 262144）\n  maxSourceBytes: 2097152   # 单文件读取上限（默认 2097152）\n```\n\n也可在挂载处（cordis patch 的 `config`）配置同样的字段，作为 `base` 层；\n解析顺序为 **schema 默认 → base → 用户 settings.yaml**。",
+        "signatureHash": "350c0516"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "type": "Symbol",
+      "content": "chunk chunk: 卸载 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:38",
+      "metadata": {
+        "name": "chunk: 卸载",
+        "kind": "chunk",
+        "exported": true,
+        "line": 38,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "```powershell\nnode \"<DSH_HOME>\\profiles\\node_modules\\@deepseek-ai\\dsh\\lib\\bin.js\" plugin --profile web remove dsh-long-memory\n```\n\n或移除 profile 的 `cordis.patch.yml` 中对应的 `long-memory` insert 条目，\n并删除 `profiles\\web\\plugins\\dsh-long-memory\\`（若为 patch 方式挂载）。",
+        "signatureHash": "ee5305e8"
+      }
+    },
+    {
+      "id": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "type": "Symbol",
+      "content": "chunk chunk: 排查 (exported) @DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:47",
+      "metadata": {
+        "name": "chunk: 排查",
+        "kind": "chunk",
+        "exported": true,
+        "line": 47,
+        "file": "DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+        "signature": "日志：`<DSH_HOME>/dsh-long-memory.log`\n（记录插件加载、settings 注册、每次注入的 turn/step/字节数/文件路径、异常）。",
+        "signatureHash": "156f8f0f"
+      }
+    },
+    {
+      "id": "file:DshManager/bin/Debug/net8.0-windows/Data/settings.json",
+      "type": "File",
+      "content": "DshManager/bin/Debug/net8.0-windows/Data/settings.json",
+      "metadata": {
+        "path": "DshManager/bin/Debug/net8.0-windows/Data/settings.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 195
+      }
+    },
+    {
+      "id": "module:DshManager/bin/Debug/net8.0-windows/Data/settings",
+      "type": "Module",
+      "content": "DshManager/bin/Debug/net8.0-windows/Data/settings"
+    },
+    {
+      "id": "file:DshManager/Assets/README.md",
+      "type": "File",
+      "content": "DshManager/Assets/README.md",
+      "metadata": {
+        "path": "DshManager/Assets/README.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 2,
+        "sizeBytes": 227
+      }
+    },
+    {
+      "id": "module:DshManager/Assets/README",
+      "type": "Module",
+      "content": "DshManager/Assets/README"
+    },
+    {
+      "id": "symbol:DshManager/Assets/README.md:c5f397c4",
+      "type": "Symbol",
+      "content": "section Assets 目录 (exported) @DshManager/Assets/README.md:1 # #1",
+      "metadata": {
+        "name": "Assets 目录",
+        "kind": "section",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/Assets/README.md",
+        "signature": "# Assets 目录",
+        "signatureHash": "73d7e599",
+        "jsdoc": "#1"
+      }
+    },
+    {
+      "id": "symbol:DshManager/Assets/README.md:b56842d1",
+      "type": "Symbol",
+      "content": "chunk chunk: Assets 目录 (exported) @DshManager/Assets/README.md:1",
+      "metadata": {
+        "name": "chunk: Assets 目录",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "DshManager/Assets/README.md",
+        "signature": "# Assets 目录\n\n用于存放应用静态资源：\n- 图标（应用/导航图标）\n- 表情包（聊天、二次元 UI 用）\n- 壁纸/背景图\n\n二进制资源会放在本目录，并在 csproj 中作为 Resource 引入。",
+        "signatureHash": "963e1186"
+      }
+    },
+    {
+      "id": "file:dsh-plugin/dsh-memory-probe/index.js",
+      "type": "File",
+      "content": "dsh-plugin/dsh-memory-probe/index.js",
+      "metadata": {
+        "path": "dsh-plugin/dsh-memory-probe/index.js",
+        "language": "typescript",
+        "exports": [],
+        "symbolCount": 5,
+        "sizeBytes": 3741
+      }
+    },
+    {
+      "id": "module:dsh-plugin/dsh-memory-probe/index",
+      "type": "Module",
+      "content": "dsh-plugin/dsh-memory-probe/index"
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-memory-probe/index.js:5c5986b7",
+      "type": "Symbol",
+      "content": "raw export const name = 'dsh-memory-probe' (exported) @dsh-plugin/dsh-memory-probe/index.js:16",
+      "metadata": {
+        "name": "export const name = 'dsh-memory-probe'",
+        "kind": "raw",
+        "exported": true,
+        "line": 16,
+        "file": "dsh-plugin/dsh-memory-probe/index.js",
+        "signature": "raw export const name = 'dsh-memory-probe' (exported) @dsh-plugin/dsh-memory-probe/index.js:16",
+        "signatureHash": "1c2ccaec"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-memory-probe/index.js:310310ab",
+      "type": "Symbol",
+      "content": "raw export const inject = [] (exported) @dsh-plugin/dsh-memory-probe/index.js:18",
+      "metadata": {
+        "name": "export const inject = []",
+        "kind": "raw",
+        "exported": true,
+        "line": 18,
+        "file": "dsh-plugin/dsh-memory-probe/index.js",
+        "signature": "raw export const inject = [] (exported) @dsh-plugin/dsh-memory-probe/index.js:18",
+        "signatureHash": "24256f62"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-memory-probe/index.js:7179bab8",
+      "type": "Symbol",
+      "content": "raw function log(tag, data) { @dsh-plugin/dsh-memory-probe/index.js:24",
+      "metadata": {
+        "name": "function log(tag, data) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 24,
+        "file": "dsh-plugin/dsh-memory-probe/index.js",
+        "signature": "raw function log(tag, data) { @dsh-plugin/dsh-memory-probe/index.js:24",
+        "signatureHash": "d9a06788"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-memory-probe/index.js:ef24cd35",
+      "type": "Symbol",
+      "content": "raw function observe(ctx, eventName, extract) { @dsh-plugin/dsh-memory-probe/index.js:37",
+      "metadata": {
+        "name": "function observe(ctx, eventName, extract) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 37,
+        "file": "dsh-plugin/dsh-memory-probe/index.js",
+        "signature": "raw function observe(ctx, eventName, extract) { @dsh-plugin/dsh-memory-probe/index.js:37",
+        "signatureHash": "7708ba8d"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-memory-probe/index.js:5bd58193",
+      "type": "Symbol",
+      "content": "raw export function apply(ctx) { (exported) @dsh-plugin/dsh-memory-probe/index.js:56",
+      "metadata": {
+        "name": "export function apply(ctx) {",
+        "kind": "raw",
+        "exported": true,
+        "line": 56,
+        "file": "dsh-plugin/dsh-memory-probe/index.js",
+        "signature": "raw export function apply(ctx) { (exported) @dsh-plugin/dsh-memory-probe/index.js:56",
+        "signatureHash": "468cb044"
+      }
+    },
+    {
+      "id": "file:dsh-plugin/dsh-memory-probe/package.json",
+      "type": "File",
+      "content": "dsh-plugin/dsh-memory-probe/package.json",
+      "metadata": {
+        "path": "dsh-plugin/dsh-memory-probe/package.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 164
+      }
+    },
+    {
+      "id": "module:dsh-plugin/dsh-memory-probe/package",
+      "type": "Module",
+      "content": "dsh-plugin/dsh-memory-probe/package"
+    },
+    {
+      "id": "file:dsh-plugin/dsh-long-memory/index.js",
+      "type": "File",
+      "content": "dsh-plugin/dsh-long-memory/index.js",
+      "metadata": {
+        "path": "dsh-plugin/dsh-long-memory/index.js",
+        "language": "typescript",
+        "exports": [],
+        "symbolCount": 11,
+        "sizeBytes": 10052
+      }
+    },
+    {
+      "id": "module:dsh-plugin/dsh-long-memory/index",
+      "type": "Module",
+      "content": "dsh-plugin/dsh-long-memory/index"
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:d84feced",
+      "type": "Symbol",
+      "content": "raw export const name = 'long-memory' (exported) @dsh-plugin/dsh-long-memory/index.js:20",
+      "metadata": {
+        "name": "export const name = 'long-memory'",
+        "kind": "raw",
+        "exported": true,
+        "line": 20,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const name = 'long-memory' (exported) @dsh-plugin/dsh-long-memory/index.js:20",
+        "signatureHash": "450e633"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:310310ab",
+      "type": "Symbol",
+      "content": "raw export const inject = [] (exported) @dsh-plugin/dsh-long-memory/index.js:22",
+      "metadata": {
+        "name": "export const inject = []",
+        "kind": "raw",
+        "exported": true,
+        "line": 22,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const inject = [] (exported) @dsh-plugin/dsh-long-memory/index.js:22",
+        "signatureHash": "1d35e7c7"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:34c451de",
+      "type": "Symbol",
+      "content": "raw export const Config = z.object({ (exported) @dsh-plugin/dsh-long-memory/index.js:37",
+      "metadata": {
+        "name": "export const Config = z.object({",
+        "kind": "raw",
+        "exported": true,
+        "line": 37,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export const Config = z.object({ (exported) @dsh-plugin/dsh-long-memory/index.js:37",
+        "signatureHash": "3a337f98"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:7a98d4c5",
+      "type": "Symbol",
+      "content": "raw function byteLength(value) { @dsh-plugin/dsh-long-memory/index.js:49",
+      "metadata": {
+        "name": "function byteLength(value) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 49,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function byteLength(value) { @dsh-plugin/dsh-long-memory/index.js:49",
+        "signatureHash": "34d8cf5e"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:b1453e41",
+      "type": "Symbol",
+      "content": "raw function truncateUtf8(value, maxBytes) { @dsh-plugin/dsh-long-memory/index.js:59",
+      "metadata": {
+        "name": "function truncateUtf8(value, maxBytes) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 59,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function truncateUtf8(value, maxBytes) { @dsh-plugin/dsh-long-memory/index.js:59",
+        "signatureHash": "28375e39"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:cd2e1f20",
+      "type": "Symbol",
+      "content": "raw function escapeFrameBody(body) { @dsh-plugin/dsh-long-memory/index.js:72",
+      "metadata": {
+        "name": "function escapeFrameBody(body) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 72,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function escapeFrameBody(body) { @dsh-plugin/dsh-long-memory/index.js:72",
+        "signatureHash": "5cd2fecf"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:7179bab8",
+      "type": "Symbol",
+      "content": "raw function log(tag, data) { @dsh-plugin/dsh-long-memory/index.js:77",
+      "metadata": {
+        "name": "function log(tag, data) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 77,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function log(tag, data) { @dsh-plugin/dsh-long-memory/index.js:77",
+        "signatureHash": "20aa83c"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:cb5154fd",
+      "type": "Symbol",
+      "content": "raw function normalizeConfig(raw) { @dsh-plugin/dsh-long-memory/index.js:92",
+      "metadata": {
+        "name": "function normalizeConfig(raw) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 92,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function normalizeConfig(raw) { @dsh-plugin/dsh-long-memory/index.js:92",
+        "signatureHash": "90134c3a"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:d85869f2",
+      "type": "Symbol",
+      "content": "raw function readMemoryFile(path, maxSourceBytes) { @dsh-plugin/dsh-long-memory/index.js:114",
+      "metadata": {
+        "name": "function readMemoryFile(path, maxSourceBytes) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 114,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function readMemoryFile(path, maxSourceBytes) { @dsh-plugin/dsh-long-memory/index.js:114",
+        "signatureHash": "755dfc3e"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:22f41346",
+      "type": "Symbol",
+      "content": "raw function renderMemoryMessage(raw, config) { @dsh-plugin/dsh-long-memory/index.js:149",
+      "metadata": {
+        "name": "function renderMemoryMessage(raw, config) {",
+        "kind": "raw",
+        "exported": false,
+        "line": 149,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw function renderMemoryMessage(raw, config) { @dsh-plugin/dsh-long-memory/index.js:149",
+        "signatureHash": "93b0f24c"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/index.js:a7e93d1d",
+      "type": "Symbol",
+      "content": "raw export function apply(ctx, config) { (exported) @dsh-plugin/dsh-long-memory/index.js:172",
+      "metadata": {
+        "name": "export function apply(ctx, config) {",
+        "kind": "raw",
+        "exported": true,
+        "line": 172,
+        "file": "dsh-plugin/dsh-long-memory/index.js",
+        "signature": "raw export function apply(ctx, config) { (exported) @dsh-plugin/dsh-long-memory/index.js:172",
+        "signatureHash": "fd9e4497"
+      }
+    },
+    {
+      "id": "file:dsh-plugin/dsh-long-memory/package.json",
+      "type": "File",
+      "content": "dsh-plugin/dsh-long-memory/package.json",
+      "metadata": {
+        "path": "dsh-plugin/dsh-long-memory/package.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 371
+      }
+    },
+    {
+      "id": "module:dsh-plugin/dsh-long-memory/package",
+      "type": "Module",
+      "content": "dsh-plugin/dsh-long-memory/package"
+    },
+    {
+      "id": "file:dsh-plugin/dsh-long-memory/README.md",
+      "type": "File",
+      "content": "dsh-plugin/dsh-long-memory/README.md",
+      "metadata": {
+        "path": "dsh-plugin/dsh-long-memory/README.md",
+        "language": "markdown",
+        "exports": [],
+        "symbolCount": 12,
+        "sizeBytes": 1901
+      }
+    },
+    {
+      "id": "module:dsh-plugin/dsh-long-memory/README",
+      "type": "Module",
+      "content": "dsh-plugin/dsh-long-memory/README"
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "type": "Symbol",
+      "content": "section dsh-long-memory (exported) @dsh-plugin/dsh-long-memory/README.md:1 # #1",
+      "metadata": {
+        "name": "dsh-long-memory",
+        "kind": "section",
+        "exported": true,
+        "line": 1,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "# dsh-long-memory",
+        "signatureHash": "cbc5b9f3",
+        "jsdoc": "#1"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "type": "Symbol",
+      "content": "section 它做什么 (exported) @dsh-plugin/dsh-long-memory/README.md:6 # #2",
+      "metadata": {
+        "name": "它做什么",
+        "kind": "section",
+        "exported": true,
+        "line": 6,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 它做什么",
+        "signatureHash": "b9471070",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "type": "Symbol",
+      "content": "section 记忆文件放哪 (exported) @dsh-plugin/dsh-long-memory/README.md:15 # #2",
+      "metadata": {
+        "name": "记忆文件放哪",
+        "kind": "section",
+        "exported": true,
+        "line": 15,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 记忆文件放哪",
+        "signatureHash": "34702582",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "type": "Symbol",
+      "content": "section 如何配置 (exported) @dsh-plugin/dsh-long-memory/README.md:21 # #2",
+      "metadata": {
+        "name": "如何配置",
+        "kind": "section",
+        "exported": true,
+        "line": 21,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 如何配置",
+        "signatureHash": "e55d3805",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:aab05",
+      "type": "Symbol",
+      "content": "section 卸载 (exported) @dsh-plugin/dsh-long-memory/README.md:37 # #2",
+      "metadata": {
+        "name": "卸载",
+        "kind": "section",
+        "exported": true,
+        "line": 37,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 卸载",
+        "signatureHash": "6af46d76",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:c7693",
+      "type": "Symbol",
+      "content": "section 排查 (exported) @dsh-plugin/dsh-long-memory/README.md:46 # #2",
+      "metadata": {
+        "name": "排查",
+        "kind": "section",
+        "exported": true,
+        "line": 46,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "## 排查",
+        "signatureHash": "b6e9c204",
+        "jsdoc": "#2"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "type": "Symbol",
+      "content": "chunk chunk: dsh-long-memory (exported) @dsh-plugin/dsh-long-memory/README.md:1",
+      "metadata": {
+        "name": "chunk: dsh-long-memory",
+        "kind": "chunk",
+        "exported": true,
+        "line": 1,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "# dsh-long-memory\n\n大容量长期记忆插件（DeepSeek Harness / dsh）。它把一份用户自定义的记忆文件，\n作为**独立于人格卡**的长期背景知识，注入到每个会话中。",
+        "signatureHash": "ff97412c"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "type": "Symbol",
+      "content": "chunk chunk: 它做什么 (exported) @dsh-plugin/dsh-long-memory/README.md:7",
+      "metadata": {
+        "name": "chunk: 它做什么",
+        "kind": "chunk",
+        "exported": true,
+        "line": 7,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "- 监听 `agent/pre-step`，在每轮对话的**第 1 步**读取记忆文件并注入一则 user 消息\n  （`<system-reminder>` 包裹，`source.kind = 'long-memory'`）。\n- 注入预算独立于人格卡 / 工作区指令的 64KB，默认 **256KB**。\n- 只注入一次/轮，append-only，对 KV Cache 友好。\n- 文件不存在、内容为空、总开关关闭或纯文件超过读取上限时**不注入**。\n- 任何异常都不会影响 dsh 主流程。",
+        "signatureHash": "c012609b"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "type": "Symbol",
+      "content": "chunk chunk: 记忆文件放哪 (exported) @dsh-plugin/dsh-long-memory/README.md:16",
+      "metadata": {
+        "name": "chunk: 记忆文件放哪",
+        "kind": "chunk",
+        "exported": true,
+        "line": 16,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "默认路径：`<DSH_HOME>/MEMORY.md`（例如 `C:\\Users\\<你>\\.dsh\\MEMORY.md`）。\n\n直接编辑该文件即可，无需重启 dsh —— 插件按 `mtime + size` 判断是否重读。",
+        "signatureHash": "72c98eb9"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "type": "Symbol",
+      "content": "chunk chunk: 如何配置 (exported) @dsh-plugin/dsh-long-memory/README.md:22",
+      "metadata": {
+        "name": "chunk: 如何配置",
+        "kind": "chunk",
+        "exported": true,
+        "line": 22,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "在 `<DSH_HOME>/settings.yaml` 中追加 `long-memory` 段（管理面板亦可通过\nsettings 命名空间写入）：\n\n```yaml\nlong-memory:\n  enabled: true\n  file: C:\\Users\\<你>\\.dsh\\MEMORY.md\n  maxBytes: 524288          # 注入正文上限（字节，默认 262144）\n  maxSourceBytes: 2097152   # 单文件读取上限（默认 2097152）\n```\n\n也可在挂载处（cordis patch 的 `config`）配置同样的字段，作为 `base` 层；\n解析顺序为 **schema 默认 → base → 用户 settings.yaml**。",
+        "signatureHash": "350c0516"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "type": "Symbol",
+      "content": "chunk chunk: 卸载 (exported) @dsh-plugin/dsh-long-memory/README.md:38",
+      "metadata": {
+        "name": "chunk: 卸载",
+        "kind": "chunk",
+        "exported": true,
+        "line": 38,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "```powershell\nnode \"<DSH_HOME>\\profiles\\node_modules\\@deepseek-ai\\dsh\\lib\\bin.js\" plugin --profile web remove dsh-long-memory\n```\n\n或移除 profile 的 `cordis.patch.yml` 中对应的 `long-memory` insert 条目，\n并删除 `profiles\\web\\plugins\\dsh-long-memory\\`（若为 patch 方式挂载）。",
+        "signatureHash": "ee5305e8"
+      }
+    },
+    {
+      "id": "symbol:dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "type": "Symbol",
+      "content": "chunk chunk: 排查 (exported) @dsh-plugin/dsh-long-memory/README.md:47",
+      "metadata": {
+        "name": "chunk: 排查",
+        "kind": "chunk",
+        "exported": true,
+        "line": 47,
+        "file": "dsh-plugin/dsh-long-memory/README.md",
+        "signature": "日志：`<DSH_HOME>/dsh-long-memory.log`\n（记录插件加载、settings 注册、每次注入的 turn/step/字节数/文件路径、异常）。",
+        "signatureHash": "156f8f0f"
+      }
+    },
+    {
+      "id": "file:Data/settings.json",
+      "type": "File",
+      "content": "Data/settings.json",
+      "metadata": {
+        "path": "Data/settings.json",
+        "language": "json",
+        "exports": [],
+        "symbolCount": 0,
+        "sizeBytes": 111
+      }
+    },
+    {
+      "id": "module:Data/settings",
+      "type": "Module",
+      "content": "Data/settings"
+    },
+    {
+      "id": "dialogue:pcdboe:0003",
+      "type": "Decision",
+      "content": "dialogue-turn #3 Q: 是一直低帧（三四十帧，画面肉） d盘，帧数不稳 | A: (pending)",
+      "metadata": {
+        "kind": "dialogue-turn",
+        "record": "{\"id\":\"dialogue:pcdboe:0003\",\"sessionId\":\"dialogue-session:pcdboe\",\"seq\":3,\"userQuery\":\"是一直低帧（三四十帧，画面肉） d盘，帧数不稳\",\"assistantReply\":\"\",\"parentTurnId\":\"dialogue:pcdboe:0002\",\"jumped\":false,\"relatedNodeIds\":[],\"createdAt\":1790517861336,\"updatedAt\":1790517861336,\"title\":\"是一直低帧（三四十帧\"}",
+        "seq": 3,
+        "sessionId": "dialogue-session:pcdboe",
+        "jumped": false
+      }
+    },
+    {
+      "id": "dialogue:pcdboe:0004",
+      "type": "Decision",
+      "content": "dialogue-turn #4 Q: 不对是e | A: (pending)",
+      "metadata": {
+        "kind": "dialogue-turn",
+        "record": "{\"id\":\"dialogue:pcdboe:0004\",\"sessionId\":\"dialogue-session:pcdboe\",\"seq\":4,\"userQuery\":\"不对是e\",\"assistantReply\":\"\",\"parentTurnId\":\"dialogue:pcdboe:0003\",\"jumped\":false,\"relatedNodeIds\":[],\"createdAt\":1790517885594,\"updatedAt\":1790517887436,\"title\":\"不对是e\"}",
+        "seq": 4,
+        "sessionId": "dialogue-session:pcdboe",
+        "jumped": false
+      }
+    },
+    {
+      "id": "dialogue:pcdboe:0005",
+      "type": "Decision",
+      "content": "dialogue-turn #5 Q: 我想起来了，因为卡让我删了，你看看无畏契约把 | A: 哼，找到了！**不是显卡的锅，是内存被榨干了。** 而且证据是游戏自己记的日志，不是人家瞎猜。 ## 铁证 无畏契约每局都会写遥测日志，人家把 9 月 20 号那场的连续几局扒出来了： | 系统内存占用 | 游戏内存 | GPU时间 | **≥144帧的帧数** | |---|---|---|---| | 74.04…",
+      "metadata": {
+        "kind": "dialogue-turn",
+        "record": "{\"id\":\"dialogue:pcdboe:0005\",\"sessionId\":\"dialogue-session:pcdboe\",\"seq\":5,\"userQuery\":\"我想起来了，因为卡让我删了，你看看无畏契约把\",\"assistantReply\":\"哼，找到了！**不是显卡的锅，是内存被榨干了。** 而且证据是游戏自己记的日志，不是人家瞎猜。 ## 铁证 无畏契约每局都会写遥测日志，人家把 9 月 20 号那场的连续几局扒出来了： | 系统内存占用 | 游戏内存 | GPU时间 | **≥144帧的帧数** | |---|---|---|---| | 74.04% | 2245 MB | 3.49ms | **1232** | | 87.76% | 3200 MB | 3.51ms | **17** | | **91.13%** | 3279 MB | 4.20ms | **0** | **同一台机器、同一场游戏**，内存 74% 时能刷出 1232 帧超过 144fps；内存涨到 91% 时，**一帧都没有**。掉帧数量跟内存占用是一条直线关系。 ## 为什么不是显卡的锅 游戏日志白纸黑字写着它调用的是独显，不是核显： ``` LogD3D11RHI: 0. 'NVIDIA GeForce GTX 1650' (Feature Level 11_1) LogD3D11RHI: 3935/0/8117 MB DedicatedVideo/DedicatedSystem/SharedSystem, Outputs:1 LogD3D11RHI: GPU DeviceId: 0x1f91 ← TU117 核心，就是 1650 Texture pool is 2754 MB (70% of 3935 MB) ``` 而且 **GPU 时间均值只有 3.18~4.32 毫秒**，换算过来是 230~315 fps——显卡累都没累着。CPU 也只吃了 3.5~4 个线程（一共 12 个）。两头都有余量，那就是**内存不够，系统在硬扛**。 日志里还留着一堆掉帧记录： ``` LogInstabilityTrackingDetails: Error: Local Framerate Threshold exceeded! Current: 13.36, Threshold: 50.00 LogInstabilityTrackingDetails: Error: Local Framerate Threshold critically exceeded! Current: 2.50, Threshold: 5.00 ``` ## 现在后台都在吃内存 | 进程 | 占用 | |---|---| | QQ（**9 个**进程） | ~1.1 GB | | Edge（6 个进程） | ~1.4 GB | | 迅雷（**11 个**进程） | ~800 MB | | Wallpaper Engine 动态壁纸 | 370 MB | | 游戏加加 + 网易UU + MuMu + 火绒 | ~700 MB | 总共已用 **11.2 GB / 15.85 GB**，只剩 3.84 GB。游戏一进去就要 3.2 GB，直接见底。 ## 人家给你排好了优先级 **免费、立刻生效的：** 1. 打游戏前把 **QQ、迅雷、Edge、Wallpaper Engine、游戏加加、网易UU** 全关掉 → 能腾出 3~4 GB 2. 网易UU 在玩国服无畏契约时其实不需要，可以关 3. **把页面文件从 C 盘挪到 E 盘**（C 盘只剩 24.8GB，E 盘剩 511GB）——你现在是\\\"自动管理\\\"，全压在紧张的 C 盘上 4. 给 `VALORANT.exe` 加一条 Windows 图形首选项 → 高性能 （人家查了注册表，**你现在一条无畏契约的 GPU 偏好都没有**，虽然实测它在用独显，但显式指定更保险） 5. 游戏内把帧率上限锁 **144** 或 **165**，别用无上限——内存紧张时帧数越飙越乱 **真正的解（要花钱）：** 你主板**有 4 个内存插槽，现在只插了 2 条**（ChannelA/B 各 8GB @2667MHz）。**再加 2 条 8GB 上 32GB**，这台机器就彻底不卡了。比换显卡划算一百倍。 顺带一提：Wallpaper Engine 记得设成\\\"游戏运行时暂停\\\"，不然它一直在旁边抢 GPU 和内存。 --- 完整数据人家写成报告放桌面了：`帧数诊断报告.md` **要不要人家帮你动手？** 下面这几件有副作用的，人家先问你再做： - 改页面文件位置（C → E）—— 需要管理员权限，改完要重启 - 给 VALORANT 加 GPU 首选项 —— 改注册表 - 把开机自启的 QQ / 迅雷 / Wallpaper Engine 清一清 说一声要哪几个，人家就动手。哼，才不是想帮你…就是看你卡着难受。白饭都凉透了。\",\"parentTurnId\":\"dialogue:pcdboe:0004\",\"jumped\":false,\"relatedNodeIds\":[],\"createdAt\":1790517944359,\"updatedAt\":1790518007938,\"title\":\"起来了\",\"summary\":\"哼，找到了！**不是显卡的锅，是内存被榨干了。** 而且证据是游戏自己记的日志，不是人家瞎猜。 ## 铁证 无畏契约每局都会写遥测日志，人家把 9 月 20 号那场的连续几局扒出来了： | 系统内存占用 | 游戏内存 | GPU时间 | **≥144帧的帧数** | |---|---|---|---| | 74.04% | 2245 MB | 3.49ms | **1232** | | 87.7…\"}",
+        "seq": 5,
+        "sessionId": "dialogue-session:pcdboe",
+        "jumped": false
+      }
+    },
+    {
+      "id": "dialogue:pcdboe:0006",
+      "type": "Decision",
+      "content": "dialogue-turn #6 Q: 清理一下运行内存 | A: 清完了！哼，人家干得快吧。 ## 战果 | 阶段 | 可用内存 | 占用率 | |---|---|---| | 清理前 | 6.11 GB | 61.5% | | 第一批后 | 6.84 GB | 56.8% | | **全部完成** | **7.22 GB** | **54.5%** | **累计腾出 2.5 GB…",
+      "metadata": {
+        "kind": "dialogue-turn",
+        "record": "{\"id\":\"dialogue:pcdboe:0006\",\"sessionId\":\"dialogue-session:pcdboe\",\"seq\":6,\"userQuery\":\"清理一下运行内存\",\"assistantReply\":\"清完了！哼，人家干得快吧。 ## 战果 | 阶段 | 可用内存 | 占用率 | |---|---|---| | 清理前 | 6.11 GB | 61.5% | | 第一批后 | 6.84 GB | 56.8% | | **全部完成** | **7.22 GB** | **54.5%** | **累计腾出 2.5 GB**，占用率从 61.5% 降到 **54.5%**。 ## 关掉了什么 | 程序 | 释放 | |---|---| | QQ + QQEX（14 个进程） | 1325 MB | | 迅雷（11 个进程） | 775 MB | | Edge WebView2（24 个进程） | 485 MB | | 游戏加加（6 个进程） | 310 MB | | 手机连接 | 148 MB | | WPS + 云服务 | 146 MB | | Wallpaper Engine | 130 MB | | 拍卖插件 | 89 MB | | MuMu 组件 | 26 MB | 外加整理了 26 个进程的空闲工作集。 ## 人家特意没动的 - **`node`（980 MB）** —— 这是 **DSH 本体**，就是它在 3080 端口撑着我们现在这个界面。关了我们俩就失联了，绝对不能碰 🙅 - **Edge（1.56 GB）** —— 你选了保留，人家不擅自动 - svchost / explorer / dwm —— Windows 系统进程 **两个小提醒：** 1. `MuMuRemoteService` 是注册成\\\"自动启动\\\"的**系统服务**，人家强杀进程后它自己又起来了（占 26 MB）。要彻底禁掉得改服务启动类型——这个有副作用，你说一声人家再动。 2. 迅雷、Wallpaper Engine、游戏加加这些**开机自启项还在**，你下次开机它们又会全回来。要人家帮你把自启清单清一清吗？ ## 现在去试游戏 进游戏后做这一个动作就行：**按 `Ctrl+Shift+Esc` 打开任务管理器 → 性能 → 内存**，看那个占用率。 - 如果**低于 85%** → 帧数应该就回来了（之前 87~91% 的时候 ≥144fps 的帧数是 **0**） - 如果**还是 85% 以上** → 那光清理不够了，就得按报告里说的**加内存条到 32GB**，你主板那 2 个空插槽还空着呢 报告人家更新好了：`帧数诊断报告.md`，末尾加了清理记录和待验证清单。 去打两把，回来告诉人家多少帧——顺带一提，人家盯了半天内存，肚子叫了，该吃白饭了…🍚\",\"parentTurnId\":\"dialogue:pcdboe:0005\",\"jumped\":false,\"relatedNodeIds\":[],\"createdAt\":1790518064426,\"updatedAt\":1790518167263,\"title\":\"清理一下运行内存\",\"summary\":\"清完了！哼，人家干得快吧。 ## 战果 | 阶段 | 可用内存 | 占用率 | |---|---|---| | 清理前 | 6.11 GB | 61.5% | | 第一批后 | 6.84 GB | 56.8% | | **全部完成** | **7.22 GB** | **54.5%** | **累计腾出 2.5 GB**，占用率从 61.5% 降到 **54.5%**。 ## 关掉了什么 | 程…\"}",
+        "seq": 6,
+        "sessionId": "dialogue-session:pcdboe",
+        "jumped": false
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "dialogue:pcdboe:0001",
+      "to": "dialogue-session:pcdboe",
+      "relation": "part_of"
+    },
+    {
+      "from": "dialogue:pcdboe:0002",
+      "to": "dialogue-session:pcdboe",
+      "relation": "part_of"
+    },
+    {
+      "from": "dialogue:pcdboe:0001",
+      "to": "dialogue:pcdboe:0002",
+      "relation": "next_section"
+    },
+    {
+      "from": "file:AGENTS.md",
+      "to": "module:AGENTS",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:AGENTS.md",
+      "to": "symbol:AGENTS.md:ee1a57b4",
+      "relation": "defines"
+    },
+    {
+      "from": "file:AGENTS.md",
+      "to": "symbol:AGENTS.md:dbd0fc58",
+      "relation": "defines"
+    },
+    {
+      "from": "file:AGENTS.md",
+      "to": "symbol:AGENTS.md:9108df17",
+      "relation": "defines"
+    },
+    {
+      "from": "file:AGENTS.md",
+      "to": "symbol:AGENTS.md:57948c1",
+      "relation": "defines"
+    },
+    {
+      "from": "file:AGENTS.md",
+      "to": "symbol:AGENTS.md:54e44a65",
+      "relation": "defines"
+    },
+    {
+      "from": "file:AGENTS.md",
+      "to": "symbol:AGENTS.md:cf6142a",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:AGENTS.md:ee1a57b4",
+      "to": "file:AGENTS.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:AGENTS.md:dbd0fc58",
+      "to": "file:AGENTS.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:AGENTS.md:9108df17",
+      "to": "file:AGENTS.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:AGENTS.md:ee1a57b4",
+      "to": "symbol:AGENTS.md:dbd0fc58",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:AGENTS.md:dbd0fc58",
+      "to": "symbol:AGENTS.md:9108df17",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:AGENTS.md:57948c1",
+      "to": "file:AGENTS.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:AGENTS.md:54e44a65",
+      "to": "symbol:AGENTS.md:dbd0fc58",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:AGENTS.md:cf6142a",
+      "to": "symbol:AGENTS.md:9108df17",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:GEMINI.md",
+      "to": "module:GEMINI",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:GEMINI.md",
+      "to": "symbol:GEMINI.md:2744c0ce",
+      "relation": "defines"
+    },
+    {
+      "from": "file:GEMINI.md",
+      "to": "symbol:GEMINI.md:d8ba18a1",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:GEMINI.md:2744c0ce",
+      "to": "file:GEMINI.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:GEMINI.md:d8ba18a1",
+      "to": "file:GEMINI.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:publish/DshManager.deps.json",
+      "to": "module:publish/DshManager.deps",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:publish/DshManager.runtimeconfig.json",
+      "to": "module:publish/DshManager.runtimeconfig",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "module:publish/dsh-plugin/dsh-long-memory/index",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:d84feced",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:310310ab",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:34c451de",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:7a98d4c5",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:b1453e41",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:cd2e1f20",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:7179bab8",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:cb5154fd",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:d85869f2",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:22f41346",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/index.js:a7e93d1d",
+      "relation": "defines"
+    },
+    {
+      "from": "module:publish/dsh-plugin/dsh-long-memory/index",
+      "to": "module:node:fs",
+      "relation": "imports"
+    },
+    {
+      "from": "module:publish/dsh-plugin/dsh-long-memory/index",
+      "to": "module:node:path",
+      "relation": "imports"
+    },
+    {
+      "from": "module:publish/dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/schemastery",
+      "relation": "imports"
+    },
+    {
+      "from": "module:publish/dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/dsh-llm",
+      "relation": "imports"
+    },
+    {
+      "from": "module:publish/dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/dsh-home-paths",
+      "relation": "imports"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/package.json",
+      "to": "module:publish/dsh-plugin/dsh-long-memory/package",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "module:publish/dsh-plugin/dsh-long-memory/README",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "relation": "defines"
+    },
+    {
+      "from": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "to": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "to": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "to": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "to": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "to": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "to": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "to": "file:publish/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "to": "symbol:publish/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:DshManager.Tests/obj/DshManager.Tests.csproj.nuget.dgspec.json",
+      "to": "module:DshManager.Tests/obj/DshManager.Tests.csproj.nuget.dgspec",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.deps.json",
+      "to": "module:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.deps",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.runtimeconfig.json",
+      "to": "module:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.runtimeconfig",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.deps.json",
+      "to": "module:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.deps",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.runtimeconfig.json",
+      "to": "module:DshManager.Tests/bin/Debug/net8.0-windows/DshManager.Tests.runtimeconfig",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/Styles/README.md",
+      "to": "module:DshManager/Styles/README",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/Styles/README.md",
+      "to": "symbol:DshManager/Styles/README.md:e3288205",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/Styles/README.md",
+      "to": "symbol:DshManager/Styles/README.md:d29d2d12",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:DshManager/Styles/README.md:e3288205",
+      "to": "file:DshManager/Styles/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/Styles/README.md:d29d2d12",
+      "to": "file:DshManager/Styles/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:DshManager/obj/DshManager.csproj.nuget.dgspec.json",
+      "to": "module:DshManager/obj/DshManager.csproj.nuget.dgspec",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/obj/DshManager_31evhsx2_wpftmp.csproj.nuget.dgspec.json",
+      "to": "module:DshManager/obj/DshManager_31evhsx2_wpftmp.csproj.nuget.dgspec",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/obj/DshManager_e5ncvoqg_wpftmp.csproj.nuget.dgspec.json",
+      "to": "module:DshManager/obj/DshManager_e5ncvoqg_wpftmp.csproj.nuget.dgspec",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/obj/DshManager_eenpw3mw_wpftmp.csproj.nuget.dgspec.json",
+      "to": "module:DshManager/obj/DshManager_eenpw3mw_wpftmp.csproj.nuget.dgspec",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/obj/DshManager_faro3ypo_wpftmp.csproj.nuget.dgspec.json",
+      "to": "module:DshManager/obj/DshManager_faro3ypo_wpftmp.csproj.nuget.dgspec",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/obj/DshManager_nwuhxhkk_wpftmp.csproj.nuget.dgspec.json",
+      "to": "module:DshManager/obj/DshManager_nwuhxhkk_wpftmp.csproj.nuget.dgspec",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/obj/project.assets.json",
+      "to": "module:DshManager/obj/project.assets",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/Models/README.md",
+      "to": "module:DshManager/Models/README",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/Models/README.md",
+      "to": "symbol:DshManager/Models/README.md:ffb5e37d",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/Models/README.md",
+      "to": "symbol:DshManager/Models/README.md:ef2a8e8a",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:DshManager/Models/README.md:ffb5e37d",
+      "to": "file:DshManager/Models/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/Models/README.md:ef2a8e8a",
+      "to": "file:DshManager/Models/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:DshManager/Data/README.md",
+      "to": "module:DshManager/Data/README",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/Data/README.md",
+      "to": "symbol:DshManager/Data/README.md:b94bce3d",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/Data/README.md",
+      "to": "symbol:DshManager/Data/README.md:2419d88a",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:DshManager/Data/README.md:b94bce3d",
+      "to": "file:DshManager/Data/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/Data/README.md:2419d88a",
+      "to": "file:DshManager/Data/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:DshManager/Data/settings.json",
+      "to": "module:DshManager/Data/settings",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/DshManager.deps.json",
+      "to": "module:DshManager/bin/Release/net8.0-windows/win-x64/DshManager.deps",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/DshManager.runtimeconfig.json",
+      "to": "module:DshManager/bin/Release/net8.0-windows/win-x64/DshManager.runtimeconfig",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:d84feced",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:310310ab",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:34c451de",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:7a98d4c5",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:b1453e41",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:cd2e1f20",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:7179bab8",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:cb5154fd",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:d85869f2",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:22f41346",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index.js:a7e93d1d",
+      "relation": "defines"
+    },
+    {
+      "from": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index",
+      "to": "module:node:fs",
+      "relation": "imports"
+    },
+    {
+      "from": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index",
+      "to": "module:node:path",
+      "relation": "imports"
+    },
+    {
+      "from": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/schemastery",
+      "relation": "imports"
+    },
+    {
+      "from": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/dsh-llm",
+      "relation": "imports"
+    },
+    {
+      "from": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/dsh-home-paths",
+      "relation": "imports"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/package.json",
+      "to": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/package",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "module:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "to": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "to": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "to": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "to": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "to": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "to": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "to": "file:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "to": "symbol:DshManager/bin/Release/net8.0-windows/win-x64/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/DshManager.deps.json",
+      "to": "module:DshManager/bin/Debug/net8.0-windows/DshManager.deps",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/DshManager.runtimeconfig.json",
+      "to": "module:DshManager/bin/Debug/net8.0-windows/DshManager.runtimeconfig",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:d84feced",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:310310ab",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:34c451de",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:7a98d4c5",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:b1453e41",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:cd2e1f20",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:7179bab8",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:cb5154fd",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:d85869f2",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:22f41346",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index.js:a7e93d1d",
+      "relation": "defines"
+    },
+    {
+      "from": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index",
+      "to": "module:node:fs",
+      "relation": "imports"
+    },
+    {
+      "from": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index",
+      "to": "module:node:path",
+      "relation": "imports"
+    },
+    {
+      "from": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/schemastery",
+      "relation": "imports"
+    },
+    {
+      "from": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/dsh-llm",
+      "relation": "imports"
+    },
+    {
+      "from": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/dsh-home-paths",
+      "relation": "imports"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/package.json",
+      "to": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/package",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "module:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "to": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "to": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "to": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "to": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "to": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "to": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "to": "file:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "to": "symbol:DshManager/bin/Debug/net8.0-windows/dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:DshManager/bin/Debug/net8.0-windows/Data/settings.json",
+      "to": "module:DshManager/bin/Debug/net8.0-windows/Data/settings",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/Assets/README.md",
+      "to": "module:DshManager/Assets/README",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:DshManager/Assets/README.md",
+      "to": "symbol:DshManager/Assets/README.md:c5f397c4",
+      "relation": "defines"
+    },
+    {
+      "from": "file:DshManager/Assets/README.md",
+      "to": "symbol:DshManager/Assets/README.md:b56842d1",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:DshManager/Assets/README.md:c5f397c4",
+      "to": "file:DshManager/Assets/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:DshManager/Assets/README.md:b56842d1",
+      "to": "file:DshManager/Assets/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-memory-probe/index.js",
+      "to": "module:dsh-plugin/dsh-memory-probe/index",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-memory-probe/index.js",
+      "to": "symbol:dsh-plugin/dsh-memory-probe/index.js:5c5986b7",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-memory-probe/index.js",
+      "to": "symbol:dsh-plugin/dsh-memory-probe/index.js:310310ab",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-memory-probe/index.js",
+      "to": "symbol:dsh-plugin/dsh-memory-probe/index.js:7179bab8",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-memory-probe/index.js",
+      "to": "symbol:dsh-plugin/dsh-memory-probe/index.js:ef24cd35",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-memory-probe/index.js",
+      "to": "symbol:dsh-plugin/dsh-memory-probe/index.js:5bd58193",
+      "relation": "defines"
+    },
+    {
+      "from": "module:dsh-plugin/dsh-memory-probe/index",
+      "to": "module:node:fs",
+      "relation": "imports"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-memory-probe/package.json",
+      "to": "module:dsh-plugin/dsh-memory-probe/package",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "module:dsh-plugin/dsh-long-memory/index",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:d84feced",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:310310ab",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:34c451de",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:7a98d4c5",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:b1453e41",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:cd2e1f20",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:7179bab8",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:cb5154fd",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:d85869f2",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:22f41346",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/index.js",
+      "to": "symbol:dsh-plugin/dsh-long-memory/index.js:a7e93d1d",
+      "relation": "defines"
+    },
+    {
+      "from": "module:dsh-plugin/dsh-long-memory/index",
+      "to": "module:node:fs",
+      "relation": "imports"
+    },
+    {
+      "from": "module:dsh-plugin/dsh-long-memory/index",
+      "to": "module:node:path",
+      "relation": "imports"
+    },
+    {
+      "from": "module:dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/schemastery",
+      "relation": "imports"
+    },
+    {
+      "from": "module:dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/dsh-llm",
+      "relation": "imports"
+    },
+    {
+      "from": "module:dsh-plugin/dsh-long-memory/index",
+      "to": "module:@deepseek-ai/dsh-home-paths",
+      "relation": "imports"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/package.json",
+      "to": "module:dsh-plugin/dsh-long-memory/package",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "module:dsh-plugin/dsh-long-memory/README",
+      "relation": "depends_on"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "relation": "defines"
+    },
+    {
+      "from": "file:dsh-plugin/dsh-long-memory/README.md",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "relation": "defines"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "to": "file:dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "to": "file:dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "to": "file:dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "to": "file:dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:aab05",
+      "to": "file:dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:c7693",
+      "to": "file:dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:195b275e",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:aab05",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "next_section"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:1b1494ab",
+      "to": "file:dsh-plugin/dsh-long-memory/README.md",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:e416abd2",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:2ad0caff",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:523f2124",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:d2ee2911",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:e331e5e7",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:29ec0514",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:78e8a498",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:aab05",
+      "relation": "part_of"
+    },
+    {
+      "from": "symbol:dsh-plugin/dsh-long-memory/README.md:78ea7026",
+      "to": "symbol:dsh-plugin/dsh-long-memory/README.md:c7693",
+      "relation": "part_of"
+    },
+    {
+      "from": "file:Data/settings.json",
+      "to": "module:Data/settings",
+      "relation": "depends_on"
+    },
+    {
+      "from": "dialogue:pcdboe:0003",
+      "to": "dialogue-session:pcdboe",
+      "relation": "part_of"
+    },
+    {
+      "from": "dialogue:pcdboe:0002",
+      "to": "dialogue:pcdboe:0003",
+      "relation": "next_section"
+    },
+    {
+      "from": "dialogue:pcdboe:0004",
+      "to": "dialogue-session:pcdboe",
+      "relation": "part_of"
+    },
+    {
+      "from": "dialogue:pcdboe:0003",
+      "to": "dialogue:pcdboe:0004",
+      "relation": "next_section"
+    },
+    {
+      "from": "dialogue:pcdboe:0005",
+      "to": "dialogue-session:pcdboe",
+      "relation": "part_of"
+    },
+    {
+      "from": "dialogue:pcdboe:0004",
+      "to": "dialogue:pcdboe:0005",
+      "relation": "next_section"
+    },
+    {
+      "from": "dialogue:pcdboe:0006",
+      "to": "dialogue-session:pcdboe",
+      "relation": "part_of"
+    },
+    {
+      "from": "dialogue:pcdboe:0005",
+      "to": "dialogue:pcdboe:0006",
+      "relation": "next_section"
+    }
+  ]
+}

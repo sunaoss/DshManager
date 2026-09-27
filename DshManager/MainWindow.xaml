@@ -1,0 +1,175 @@
+<Window x:Class="DshManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="鲸鱼娘 · DeepSeek Harness 管理面板"
+        Height="680" Width="1000"
+        MinHeight="520" MinWidth="780"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        FontFamily="Microsoft YaHei UI"
+        TextOptions.TextFormattingMode="Display"
+        UseLayoutRounding="True">
+    <Grid>
+        <!-- ==================== 背景层：壁纸 / 深海渐变 ==================== -->
+        <Grid x:Name="BackgroundLayer">
+            <!-- 无壁纸时的深海渐变底 -->
+            <Rectangle x:Name="GradientFallback">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FF0F1E29" Offset="0"/>
+                        <GradientStop Color="#FF123548" Offset="0.55"/>
+                        <GradientStop Color="#FF1E3A5F" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <!-- 用户壁纸（模糊度/透明度由设置驱动） -->
+            <Image x:Name="WallpaperImage" Stretch="UniformToFill" Visibility="Collapsed">
+                <Image.Effect>
+                    <BlurEffect x:Name="WallpaperBlurEffect" Radius="0"/>
+                </Image.Effect>
+            </Image>
+            <!-- 壁纸上的深色罩层：提高内容可读性 -->
+            <Rectangle x:Name="DarkOverlay" Fill="{DynamicResource DarkOverlayBrush}" Visibility="Collapsed"/>
+        </Grid>
+
+        <!-- ==================== 内容层 ==================== -->
+        <Grid Margin="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 自定义标题栏：左侧鲸鱼娘标题，右侧窗口控制按钮 -->
+            <Border x:Name="TitleBar" Grid.Row="0"
+                    Background="{DynamicResource TitleBarBgBrush}"
+                    BorderBrush="{DynamicResource BorderSoftBrush}"
+                    BorderThickness="1,1,1,0"
+                    CornerRadius="14,14,0,0"
+                    MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid>
+                    <!-- 标题与鲸鱼点缀 -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                        <TextBlock Text="🐳" FontSize="18" VerticalAlignment="Center"/>
+                        <TextBlock Text="鲸鱼娘 · DeepSeek Harness" FontSize="14" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   VerticalAlignment="Center" Margin="9,0,0,0"/>
+                        <Ellipse Style="{DynamicResource StatusLightStyle}" VerticalAlignment="Center" Margin="14,1,0,0"/>
+                    </StackPanel>
+
+                    <!-- 最小化 / 最大化 / 关闭 -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+                        <Button Style="{DynamicResource TitleBarButtonStyle}" Click="MinimizeButton_Click" ToolTip="最小化">
+                            <Grid Width="12" Height="12">
+                                <Path Data="M1,6 L11,6" Stroke="White" StrokeThickness="1.6" Stretch="Uniform"/>
+                            </Grid>
+                        </Button>
+                        <Button x:Name="MaximizeButton" Style="{DynamicResource TitleBarButtonStyle}"
+                                Click="MaximizeButton_Click" ToolTip="最大化 / 还原">
+                            <Grid Width="12" Height="12">
+                                <Path x:Name="MaxIcon" Data="M1.5,1.5 H10.5 V10.5 H1.5 Z"
+                                      Stroke="White" StrokeThickness="1.3" Stretch="Uniform"/>
+                                <Path x:Name="RestoreIcon" Data="M4,1.5 H10.5 V8 H4 Z M1.5,4 H8 V10.5 H1.5 Z"
+                                      Stroke="White" StrokeThickness="1.3" Stretch="Uniform" Visibility="Collapsed"/>
+                            </Grid>
+                        </Button>
+                        <Button Style="{DynamicResource TitleBarCloseButtonStyle}" Click="CloseButton_Click" ToolTip="关闭">
+                            <Grid Width="12" Height="12">
+                                <Path Data="M1,1 L11,11 M11,1 L1,11" Stroke="White" StrokeThickness="1.6" Stretch="Uniform"/>
+                            </Grid>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 主体：左导航卡片 + 右内容卡片 -->
+            <Grid Grid.Row="1" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="196"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 左侧导航卡片 -->
+                <Border Grid.Column="0" Style="{DynamicResource MoeCardStyle}" Padding="10,14">
+                    <DockPanel>
+                        <!-- 鲸鱼品牌区 -->
+                        <StackPanel DockPanel.Dock="Top" Margin="6,2,6,12">
+                            <TextBlock Text="🐳" FontSize="32" HorizontalAlignment="Center"/>
+                            <TextBlock Text="鲸鱼娘" FontSize="17" FontWeight="Bold"
+                                       Foreground="{DynamicResource WhaleBlueBrush}"
+                                       HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                            <TextBlock Text="DEEPSEEK HARNESS" FontSize="8.5"
+                                       Foreground="{DynamicResource TextMutedBrush}"
+                                       HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                            <Border Height="1" Background="{DynamicResource BorderSoftBrush}" Margin="6,10,6,2"/>
+                        </StackPanel>
+
+                        <!-- 导航列表 -->
+                        <ItemsControl ItemsSource="{Binding NavItems}" Margin="0,0,0,8">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.NavigateCommand,
+                                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{DynamicResource NavButtonStyle}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Icon}" FontSize="15" Width="24"
+                                                       TextAlignment="Center" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Name}" FontSize="13.5"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                                       VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- 底部状态 -->
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="10,6,10,2">
+                            <Ellipse Style="{DynamicResource StatusLightStyle}"/>
+                            <TextBlock Text="鲸鱼娘在线" FontSize="11"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+
+                <!-- 右侧内容卡片：毛玻璃承载当前页面 -->
+                <Border Grid.Column="1" Style="{DynamicResource MoeCardStyle}" Margin="10,0,0,0">
+                    <ContentControl Content="{Binding CurrentView}" Margin="2"/>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- ==================== 窗口缩放：四边 + 四角 Thumb ==================== -->
+        <Thumb Style="{DynamicResource ResizeThumbStyle}" Tag="N" Height="6"
+               HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="14,0,14,0"
+               Cursor="SizeNS" DragDelta="ResizeThumb_DragDelta"/>
+        <Thumb Style="{DynamicResource ResizeThumbStyle}" Tag="S" Height="6"
+               HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="14,0,14,0"
+               Cursor="SizeNS" DragDelta="ResizeThumb_DragDelta"/>
+        <Thumb Style="{DynamicResource ResizeThumbStyle}" Tag="W" Width="6"
+               HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0,14,0,14"
+               Cursor="SizeWE" DragDelta="ResizeThumb_DragDelta"/>
+        <Thumb Style="{DynamicResource ResizeThumbStyle}" Tag="E" Width="6"
+               HorizontalAlignment="Right" VerticalAlignment="Stretch" Margin="0,14,0,14"
+               Cursor="SizeWE" DragDelta="ResizeThumb_DragDelta"/>
+        <Thumb Style="{DynamicResource ResizeThumbStyle}" Tag="NW" Width="12" Height="12"
+               HorizontalAlignment="Left" VerticalAlignment="Top"
+               Cursor="SizeNWSE" DragDelta="ResizeThumb_DragDelta"/>
+        <Thumb Style="{DynamicResource ResizeThumbStyle}" Tag="NE" Width="12" Height="12"
+               HorizontalAlignment="Right" VerticalAlignment="Top"
+               Cursor="SizeNESW" DragDelta="ResizeThumb_DragDelta"/>
+        <Thumb Style="{DynamicResource ResizeThumbStyle}" Tag="SW" Width="12" Height="12"
+               HorizontalAlignment="Left" VerticalAlignment="Bottom"
+               Cursor="SizeNESW" DragDelta="ResizeThumb_DragDelta"/>
+        <Thumb Style="{DynamicResource ResizeThumbStyle}" Tag="SE" Width="12" Height="12"
+               HorizontalAlignment="Right" VerticalAlignment="Bottom"
+               Cursor="SizeNWSE" DragDelta="ResizeThumb_DragDelta"/>
+    </Grid>
+</Window>
